@@ -146,6 +146,14 @@ function loadImages() {
 	combatItems[2].src = "images/combat items/potion motion 2.png";
 	combatItems[3] = new Image();
 	combatItems[3].src = "images/combat items/potion motion 3.png";
+	combatItems[4] = new Image();
+	combatItems[4].src = "images/combat items/sword.png";	
+	combatItems[5] = new Image();
+	combatItems[5].src = "images/combat items/sword motion 1.png";
+	combatItems[6] = new Image();
+	combatItems[6].src = "images/combat items/sword motion 2.png";
+	combatItems[7] = new Image();
+	combatItems[7].src = "images/combat items/sword motion 3.png";
 }
 
 var gameArea = {
@@ -274,6 +282,8 @@ function player(x, y) {
 	this.baseDamage = 5;
 	this.damageRange = 5;
 	this.weaponCost = 100;
+	this.attacking = 0;
+	this.attackMotion = 0;
 	
 	this.armorRank = 0;
 	this.armor = 3;
@@ -1062,6 +1072,20 @@ function updateGameArea() {
 				ctx.drawImage(combatItems[3], 100, 435, 115, 115);
 			} else {
 				pl.drinkingPotion = 0;
+				ctx.drawImage(character[6], 100, 435, 105, 115);
+			}
+		} else if (pl.attacking === 1) {
+			var combatOffset = 4;
+			pl.attackMotion++;
+			var frameLength = 4;
+			if (pl.attackMotion < frameLength) {	
+				ctx.drawImage(combatItems[combatOffset + 1], 100, 435, 160, 115);
+			} else if (pl.attackMotion < frameLength * 2) {	
+				ctx.drawImage(combatItems[combatOffset + 2], 100, 435, 160, 115);
+			} else if (pl.attackMotion < frameLength * 3) {	
+				ctx.drawImage(combatItems[combatOffset + 3], 100, 435, 160, 115);
+			} else {
+				pl.attacking = 0;
 				ctx.drawImage(character[6], 100, 435, 105, 115);
 			}
 		} else {
@@ -1856,6 +1880,8 @@ window.onkeyup = function(e) {
 			if(key === 65) {
 				//attack (A)
 				awaitingInput = 0;
+				pl.attacking = 1;
+				pl.attackMotion = 0;
 				var armorReduction = target.armor - pl.armorPen;
 				if(pl.armorPen > target.armor) {
 					armorReduction = 0;

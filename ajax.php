@@ -4,7 +4,7 @@
 	$password = "ea36a1fa";
 	$conn = new mysqli($servername, $username, $password);
 		if ($conn->connect_errno > 0) {
-	    die("Connection failed: " . mysqli_connect_error());
+	    die('Unable to connect to database [' . $db->connect_error . ']');
 	}
 	echo "Connected successfully";
 	

@@ -2067,7 +2067,7 @@ window.onkeyup = function(e) {
 //AJAX functions
 function getOutput() {
 	getRequest(
-		"ajax.php",
+		"tt.php",
 		drawOutput,
 		drawError
 	);

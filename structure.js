@@ -1287,6 +1287,8 @@ function updateGameArea() {
 		ctx.drawImage(basicImage[2], 8, 563, 22, 30);
 		ctx.fillText("(S)hop", 30, 560);
 		ctx.drawImage(basicImage[4], 10, 546, 22, 17);
+		ctx.fillText("(K)Highscores", 500, 580);
+		ctx.drawImage(basicImage[4], 10, 546, 22, 17);
 	}
 }
 
@@ -2259,10 +2261,10 @@ function drawOutput(responseText) {
 	var entries = responseText.split("_");
 	for(var i = 0; i < entries.length - 1; i++) {
 		var row = entries[i].split(" ");
-		ctx.fillText(row[0], 30, 60 + 30 * i + 500 * scoreOffset);
-		ctx.fillText(row[1], 90 , 60 + 30 * i + 500 * scoreOffset);
-		ctx.fillText(row[2], 300, 60 + 30 * i + 500 * scoreOffset);
-		ctx.fillText(row[3], 500, 60 + 30 * i + 500 * scoreOffset);
+		ctx.fillText(row[0], 30, 60 + 30 * i - 500 * scoreOffset);
+		ctx.fillText(row[1], 90 , 60 + 30 * i - 500 * scoreOffset);
+		ctx.fillText(row[2], 300, 60 + 30 * i - 500 * scoreOffset);
+		ctx.fillText(row[3], 500, 60 + 30 * i - 500 * scoreOffset);
 	}
 }
 	

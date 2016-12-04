@@ -131,7 +131,12 @@ function loadImages() {
 	}
 	combatItems[0] = new Image();
 	combatItems[0].src = "images/combat items/potion.png";	
-
+	combatItems[1] = new Image();
+	combatItems[1].src = "images/combat items/potion motion 1.png";
+	combatItems[2] = new Image();
+	combatItems[2].src = "images/combat items/potion motion 2.png";
+	combatItems[3] = new Image();
+	combatItems[3].src = "images/combat items/potion motion 3.png";
 }
 
 var gameArea = {
@@ -267,6 +272,8 @@ function player(x, y) {
 	this.potions = 5;
 	this.potionUpgradeCost = 100;
 	this.potionCost = 50;
+	this.drinkingPotion = 0;
+	this.potionMotion = 0;
 	
 	this.damageTaken = [];
 	this.hitsTaken = 0;
@@ -1021,7 +1028,22 @@ function updateGameArea() {
 		}
 		
 		//draw player
-		ctx.drawImage(character[6], 100, 435, 105, 115);
+		if (pl.drinkingPotion === 1) {
+			pl.potionMotion++;
+			var frameLength = 6;
+			if (pl.potionMotion < frameLength) {	
+				ctx.drawImage(combatItems[1], 100, 435, 115, 115);
+			} else if (pl.potionMotion < frameLength * 2) {	
+				ctx.drawImage(combatItems[2], 100, 435, 115, 115);
+			} else if (pl.potionMotion < frameLength * 3) {	
+				ctx.drawImage(combatItems[3], 100, 435, 115, 115);
+			} else {
+				pl.drinkingPotion = 0;
+				ctx.drawImage(character[6], 100, 435, 105, 115);
+			}
+		} else {
+			ctx.drawImage(character[6], 100, 435, 105, 115);
+		}
 		
 		//draw border bars
 		ctx.fillStyle = "#C0C0C0";
@@ -1066,7 +1088,7 @@ function updateGameArea() {
 		ctx.fillStyle = "white";
 		ctx.font = "18px Consolas";
 		ctx.fillText("(A)ttack", 310, 430);
-		ctx.fillText("(P)otion  " + pl.potions + "", 430, 430);
+		ctx.fillText("(P)otion    " + pl.potions + "", 430, 430);
 		if(pl.rampage === 0) {
 			ctx.fillStyle = "grey";
 		}
@@ -1103,7 +1125,7 @@ function updateGameArea() {
 		ctx.fillText(abilityError, 300, 380);
 		
 		//draw ability window images
-		ctx.drawImage(combatItems[0], 533, 414, 30, 19);
+		ctx.drawImage(combatItems[0], 523, 414, 30, 19);
 		
 		//player damage taken
 		if(pl.hitsTaken > 0) {
@@ -1819,6 +1841,8 @@ window.onkeyup = function(e) {
 					//pl.turnStorage = pl.turnStorage - 1;
 					awaitingInput = 0;
 					pl.potions = pl.potions - 1;
+					pl.drinkingPotion = 1;
+					pl.potionMotion = 0;
 					var amtHeal = Math.floor(Math.random() * (25 + 5 * pl.potionRank)) + 25;
 					if(amtHeal > 0) {
 						pl.healed = amtHeal;

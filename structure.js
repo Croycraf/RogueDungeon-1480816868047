@@ -4,6 +4,7 @@ function start() {
 	TILE_SIZE = 40;
 	TILE_SPACE = 50;
 	serverConnection = 0;
+	sentHighScores = 0;
 	highScoresText = "generic text test";
 	
 	//general globals
@@ -249,7 +250,7 @@ function player(x, y) {
 	position = null;
 	
 	//combat variables and related shop variables
-	this.hp = 100;
+	this.hp = 1;
 	this.speedEntropy = Math.floor(Math.random() * 100);
 	this.turnStorage = 0;
 	
@@ -442,10 +443,13 @@ function updateGameArea() {
 		ctx.font = "40px Consolas";
 		ctx.fillText("GAME OVER", 200, 200);
 		ctx.fillText("Score: " + score, 200, 300);
-		ctx.fillStyle = "white";
-		ctx.fillRect(100, 300, 400, 30);
-		ctx.fillStyle = "black";
-		ctx.fillText(pl.name, 100, 300);
+		if(sentHighScores === 0) {
+			ctx.fillStyle = "white";
+			ctx.fillRect(100, 335, 400, 30);
+			ctx.fillStyle = "black";
+			ctx.font = "30px Consolas";
+			ctx.fillText(pl.name, 100, 360);
+		}
 	}
 	else if(abilitiesActive === 1) {
 		//draw hero abilities screen
@@ -1630,7 +1634,22 @@ window.onkeyup = function(e) {
 	
 	if(gameOver === 1) {
 		//block all inputs
-		pl.name = String.fromCharCode(key);
+		if(sentHighScores === 0) {
+			if(key === 8) {
+				pl.name = pl.name.substring(0, pl.name.length - 1);
+			}
+			else if(key === 13) {
+				//SEND RESULTS AND PREVENT MULTIPLE SENDS
+				sentHighScores = 1;
+			}
+			else if(key === 17 || key === 18 || key === 16 || key === 9 || key === 220 || key === 187 || key === 189 || key === 32 || key === 20 || key === 27 || key === 112 || key === 113 || key === 114 || key === 115 || key === 116 || key === 117 || key === 118 || key === 119 || key === 120 || key === 121 || key === 122 || key === 123 || key === 45 || key === 46) {
+				//block inputs from adding chars
+				//stops shift, ctrl, alt, tab, function keys, esc, and special chars
+			}
+			else {
+				pl.name = pl.name + String.fromCharCode(key);
+			}
+		}
 	}
 	else if(abilitiesActive === 1) {
 		if(key === 72) {

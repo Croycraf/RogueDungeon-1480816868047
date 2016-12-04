@@ -6,7 +6,7 @@
 		if ($conn->connect_errno > 0) {
 	    die('Unable to connect to database' . $conn->connect_error);
 	}
-	echo "Connected successfully";
+	echo "Connected successfully. ";
 	
 	$q = $_REQUEST["q"];
 	

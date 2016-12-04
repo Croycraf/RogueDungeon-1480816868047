@@ -1686,6 +1686,9 @@ window.onkeyup = function(e) {
 				//SEND RESULTS AND PREVENT MULTIPLE SENDS
 				getOutput();
 				sentHighScores = 1;
+				gameOver = 0;
+				getOutput();
+				gameOver = 1;
 				scoreboardActive = 1;
 				
 			}
@@ -2240,10 +2243,10 @@ function drawOutput(responseText) {
 	var entries = responseText.split("_");
 	for(var i = 0; i < entries.length; i++) {
 		var row = entries[i].split(" ");
-		ctx.fillText(row[0], 20, 30);
-		ctx.fillText(row[1], 20, 160);
-		ctx.fillText(row[2], 20, 350);
-		ctx.fillText(row[3], 20, 550);
+		ctx.fillText(row[0], 30, 20 + 30 * i);
+		ctx.fillText(row[1], 160 , 20 + 30 * i);
+		ctx.fillText(row[2], 350, 20 + 30 * i);
+		ctx.fillText(row[3], 550, 20 + 30 * i);
 	}
 }
 	

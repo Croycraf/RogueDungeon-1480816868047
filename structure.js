@@ -187,6 +187,10 @@ function loadImages() {
 	heroImages[8].src = "images/hero images/enrage motion 3.png";
 	heroImages[9] = new Image();
 	heroImages[9].src = "images/hero images/snail.png";
+	heroImages[10] = new Image();
+	heroImages[10].src = "images/hero images/question mark.png";
+	heroImages[11] = new Image();
+	heroImages[11].src = "images/hero images/question marks.png";
 }
 
 var gameArea = {
@@ -320,6 +324,8 @@ function player(x, y) {
 	this.rampageAttack = 0;
 	this.enrageAnimation = 0;
 	this.hamperAnimation = 0;
+	this.crushAnimation = 0;
+	this.yChange = 0;
 	
 	this.armorRank = 0;
 	this.armor = 3;
@@ -960,6 +966,8 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
+		//draw crush
+		ctx.drawImage(heroImages[11], xPos + 50, yPos + 20, 45, 45);
 		
 		//draw utility abilities
 		xPos = 420;
@@ -1234,6 +1242,24 @@ function updateGameArea() {
 				pl.hamperAnimation = 0;
 			}
 		}
+		if (pl.crushAnimation === 1) {
+			pl.attackMotion++;
+			var frameLength = 8;
+			if (pl.attackMotion < frameLength) {
+				pl.yChange++;
+			} else if (pl.attackMotion < frameLength * 2) {
+				pl.yChange--;
+			} else if (pl.attackMotion < frameLength * 3) {
+				pl.yChange++;
+			} else if (pl.attackMotion < frameLength * 4) {
+				pl.yChange--;
+			} else {
+				pl.crushAnimation = 0;
+			}
+			ctx.drawImage(heroImages[10], 360, 80 - pl.yChange, 25, 25);
+			ctx.drawImage(heroImages[10], 400, 50 - pl.yChange, 25, 25);
+			ctx.drawImage(heroImages[10], 440, 80 - pl.yChange, 25, 25);
+		}
 		
 		//draw border bars
 		ctx.fillStyle = "#C0C0C0";
@@ -1309,6 +1335,7 @@ function updateGameArea() {
 			ctx.fillStyle = "grey";
 		}
 		ctx.fillText("(C)rush", 430, 510);
+		ctx.drawImage(heroImages[11], 500, 492, 26, 22);
 		ctx.fillStyle = "white";
 		if(pl.utilityAbility[9] === 0) {
 			ctx.fillStyle = "grey";
@@ -2207,6 +2234,9 @@ window.onkeyup = function(e) {
 				if(pl.defenseAbility[9] === 1 && pl.canCrush === 1) {
 					pl.canCrush = 0;
 					awaitingInput = 0;
+					pl.crushAnimation = 1;
+					pl.attackMotion = 0;
+					pl.yChange = 0;
 					var armorReduction = target.armor - pl.armorPen;
 					if(pl.armorPen > target.armor) {
 						armorReduction = 0;
@@ -2367,6 +2397,7 @@ window.onkeyup = function(e) {
 				pl.rampageAttack = 0;
 				pl.enrageAnimation = 0;
 				pl.hamperAnimation = 0;
+				pl.crushAnimation = 0;
 				combatHandle();
 			}
 		}

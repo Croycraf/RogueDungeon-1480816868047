@@ -2243,12 +2243,12 @@ function getRequest(url, success, errorFunc) {
 			}
 		}
 	};
-	//if(gameOver === 1) {
-	//	req.open("GET", url + "?q=send&name=" + pl.name + "&score=" + score + "&floor=" + dungeonLevel);
-	//}
-	//else {
-		req.open("GET", url + "?q=" + "score" + "&name=" + "billy", true);
-	//}
+	if(gameOver === 1) {
+		req.open("GET", url + "?q=" + "send" + "&name=" + pl.name + "&score=" + score + "&floor=" + dungeonLevel, true);
+	}
+	else {
+		req.open("GET", url + "?q=" + "score" + "&name=" + pl.name + "&score" + score + "&floor=" + dungeonLevel, true);
+	}
 	req.send();
 	return req;
 }

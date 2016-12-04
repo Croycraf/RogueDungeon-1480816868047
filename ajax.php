@@ -39,6 +39,7 @@
 	else {
 		//$conn->query("INSERT INTO highscores (userName, score, floor) VALUES (" . $name . ", " . $score . ", " . $floor . ")");
 		$conn->query("INSERT INTO highscores (userName, score, floor) VALUES ('$name', '$score', '$floor')");
+		$conn->query("DELETE FROM highscores ORDER BY score LIMIT 1");
 		echo "Your Input: " . $name . " " . $score . " " . $floor;
 	}
 	$conn->close();

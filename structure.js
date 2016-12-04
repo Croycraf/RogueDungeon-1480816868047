@@ -175,6 +175,8 @@ function loadImages() {
 	heroImages[2].src = "images/hero images/figure running.png";
 	heroImages[3] = new Image();
 	heroImages[3].src = "images/hero images/broken shield.png";
+	heroImages[4] = new Image();
+	heroImages[4].src = "images/hero images/fist.png";
 }
 
 var gameArea = {
@@ -305,6 +307,7 @@ function player(x, y) {
 	this.weaponCost = 100;
 	this.attacking = 0;
 	this.attackMotion = 0;
+	this.rampageAttack = 0;
 	
 	this.armorRank = 0;
 	this.armor = 3;
@@ -725,6 +728,8 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
+		//draw rampage
+		ctx.drawImage(heroImages[4], xPos + 57, yPos + 2, 33, 35);
 
 		if(pl.offenseAbility[2] === 1) {
 			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
@@ -758,7 +763,9 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
-	
+		//draw rampage
+		ctx.drawImage(heroImages[4], xPos + 57, yPos + 2, 33, 35);
+		
 		if(pl.offenseAbility[5] === 1) {
 			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
@@ -791,7 +798,9 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
-
+		//draw rampage
+		ctx.drawImage(heroImages[4], xPos + 57, yPos + 2, 33, 35);
+		
 		if(pl.offenseAbility[8] === 1) {
 			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
@@ -1160,6 +1169,21 @@ function updateGameArea() {
 				pl.attacking = 0;
 				ctx.drawImage(character[6], 100, 435, 105, 115);
 			}
+		} else if (pl.rampageAttack === 1) {
+			var combatOffset = 4;
+			pl.attackMotion++;
+			var frameLength = 15;
+			if (pl.attackMotion < frameLength) {
+				if (pl.attackMotion < (frameLength / 2)) {
+					ctx.drawImage(character[10], 100, 435, 105, 115);
+				} else {
+					ctx.drawImage(character[6], 100, 435, 105, 115);
+				}
+				ctx.drawImage(heroImages[4], 120 + pl.attackMotion * 20, 360 - pl.attackMotion * 20, 80, 80);
+			} else {
+				pl.rampageAttack = 0;
+				ctx.drawImage(character[6], 100, 435, 105, 115);
+			}
 		} else {
 			ctx.drawImage(character[6], 100, 435, 105, 115);
 		}
@@ -1199,32 +1223,33 @@ function updateGameArea() {
 		
 		//draw ability window
 		ctx.fillStyle = "#C0C0C0";
-		ctx.fillRect(285, 395, 305, 195);
+		ctx.fillRect(285, 400, 305, 190);
 		ctx.fillStyle = "black";
-		ctx.fillRect(290, 400, 295, 185);
+		ctx.fillRect(290, 405, 295, 180);
 		
 		//fill ability window
 		ctx.fillStyle = "white";
 		ctx.font = "18px Consolas";
-		ctx.fillText("(A)ttack", 310, 430);
-		ctx.drawImage(combatItems[4], 395, 414, 20, 19);
-		ctx.fillText("(P)otion    " + pl.potions + "", 430, 430);
-		ctx.drawImage(combatItems[0], 523, 414, 30, 19);
+		ctx.fillText("(A)ttack", 300, 430);
+		ctx.drawImage(combatItems[4], 385, 413, 25, 24);
+		ctx.fillText("(P)otion   " + pl.potions + "", 430, 430);
+		ctx.drawImage(combatItems[0], 513, 414, 30, 19);
 		if(pl.rampage === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(R)ampage", 310, 470);
+		ctx.fillText("(R)ampage", 300, 470);
+		ctx.drawImage(heroImages[4], 392, 453, 25, 25);
 		ctx.fillStyle = "white";
 		if(pl.hamper === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(H)amper", 310, 510);
+		ctx.fillText("(H)amper", 300, 510);
 		ctx.fillStyle = "white";
 		if(pl.viperStrike === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(V)iper", 310, 550);
-		ctx.fillText(" Strike", 310, 570);
+		ctx.fillText("(V)iper", 300, 550);
+		ctx.fillText(" Strike", 300, 570);
 		ctx.fillStyle = "white";
 		if(pl.offenseAbility[9] === 0) {
 			ctx.fillStyle = "grey";
@@ -2013,6 +2038,8 @@ window.onkeyup = function(e) {
 				//rampage
 				if(pl.rampage > 0) {
 					awaitingInput = 0;
+					pl.rampageAttack = 1;
+					pl.attackMotion = 0;
 					var armorReduction = target.armor = pl.armorPen;
 					if(pl.armorPen > target.armor) {
 						armorReduction = 0;
@@ -2284,6 +2311,7 @@ window.onkeyup = function(e) {
 				pl.canSeek = 1;
 				pl.drinkingPotion = 0;
 				pl.attacking = 0;
+				pl.rampageAttack = 0;
 				combatHandle();
 			}
 		}

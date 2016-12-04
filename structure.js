@@ -2239,14 +2239,14 @@ function drawOutput(responseText) {
 	highScoresText = responseText;
 	ctx.fillStyle = "white";
 	//ctx.fillText("Server success!", 60, 250);
-	ctx.fillText(responseText, 100, 100);
+	//ctx.fillText(responseText, 100, 100);
 	var entries = responseText.split("_");
-	for(var i = 0; i < entries.length; i++) {
+	for(var i = 0; i < entries.length - 1; i++) {
 		var row = entries[i].split(" ");
-		ctx.fillText(row[0], 30, 20 + 30 * i);
-		ctx.fillText(row[1], 160 , 20 + 30 * i);
-		ctx.fillText(row[2], 350, 20 + 30 * i);
-		ctx.fillText(row[3], 550, 20 + 30 * i);
+		ctx.fillText(row[0], 30, 60 + 30 * i);
+		ctx.fillText(row[1], 90 , 60 + 30 * i);
+		ctx.fillText(row[2], 300, 60 + 30 * i);
+		ctx.fillText(row[3], 500, 60 + 30 * i);
 	}
 }
 	

@@ -1287,7 +1287,7 @@ function updateGameArea() {
 		ctx.drawImage(basicImage[2], 8, 563, 22, 30);
 		ctx.fillText("(S)hop", 30, 560);
 		ctx.drawImage(basicImage[4], 10, 546, 22, 17);
-		ctx.fillText("(K)Highscores", 500, 580);
+		ctx.fillText("(K)High Scores", 440, 580);
 		ctx.drawImage(basicImage[4], 10, 546, 22, 17);
 	}
 }

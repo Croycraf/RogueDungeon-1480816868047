@@ -1092,7 +1092,7 @@ function updateGameArea() {
 		} else if (pl.attacking === 1) {
 			var combatOffset = 4;
 			pl.attackMotion++;
-			var frameLength = 4;
+			var frameLength = 3;
 			if (pl.attackMotion < frameLength) {	
 				ctx.drawImage(combatItems[combatOffset + 1], 100, 435, 160, 115);
 			} else if (pl.attackMotion < frameLength * 2) {	
@@ -1150,7 +1150,9 @@ function updateGameArea() {
 		ctx.fillStyle = "white";
 		ctx.font = "18px Consolas";
 		ctx.fillText("(A)ttack", 310, 430);
+		ctx.drawImage(combatItems[4], 395, 414, 20, 19);
 		ctx.fillText("(P)otion    " + pl.potions + "", 430, 430);
+		ctx.drawImage(combatItems[0], 523, 414, 30, 19);
 		if(pl.rampage === 0) {
 			ctx.fillStyle = "grey";
 		}
@@ -1185,9 +1187,6 @@ function updateGameArea() {
 		//ability error
 		ctx.fillStyle = "red";
 		ctx.fillText(abilityError, 300, 380);
-		
-		//draw ability window images
-		ctx.drawImage(combatItems[0], 523, 414, 30, 19);
 		
 		//player damage taken
 		if(pl.hitsTaken > 0) {
@@ -1909,7 +1908,7 @@ window.onkeyup = function(e) {
 				if(pl.hp > 100) {
 					pl.hp = 100;
 				}
-				
+
 				combatHandle();
 			}
 			else if(key === 80) {
@@ -1929,6 +1928,7 @@ window.onkeyup = function(e) {
 					if(pl.hp > 100) {
 						pl.hp = 100;
 					}
+					
 					combatHandle();
 				}
 			}
@@ -2205,6 +2205,8 @@ window.onkeyup = function(e) {
 				pl.canEnrage = 1;
 				pl.canCrush = 1;
 				pl.canSeek = 1;
+				pl.drinkingPotion = 0;
+				pl.attacking = 0;
 				combatHandle();
 			}
 		}

@@ -6,33 +6,25 @@
 		if ($conn->connect_errno > 0) {
 	    die('Unable to connect to database' . $conn->connect_error);
 	}
-	echo "Connected successfully. ";
 	
 	$q = $_REQUEST["q"];
 	
 	$sql = "SELECT * FROM highscores ORDER BY score DESC";
 	$result = $conn->query($sql);
-	//$result = $conn->prepare($sql);
-	//$result->execute();
-	//$result->store_result();
 	$rank = 1;
-	
-	//echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";
-	//echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
 
 	if($result->num_rows > 0) {
-		echo "before while";
 		while ($row = $result->fetch_assoc()) {
-			echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
+			echo $rank . " " . $row["userName"] . " " . $row["score"] . " " . $row["floor"] . "\n";
 			$rank++;
 		}
 	}
 	else {
 		if($result->num_rows == 0) {
-			echo "zero";
+			echo "No results found.";
 		}
 		else {
-			echo "less than zero";
+			echo "This shouldn't happen. This is embarrassing."	
 		}
 		//echo "zero or less";
 	}

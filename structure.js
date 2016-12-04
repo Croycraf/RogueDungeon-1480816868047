@@ -185,6 +185,8 @@ function loadImages() {
 	heroImages[7].src = "images/hero images/enrage motion 2.png";
 	heroImages[8] = new Image();
 	heroImages[8].src = "images/hero images/enrage motion 3.png";
+	heroImages[9] = new Image();
+	heroImages[9].src = "images/hero images/snail.png";
 }
 
 var gameArea = {
@@ -317,6 +319,7 @@ function player(x, y) {
 	this.attackMotion = 0;
 	this.rampageAttack = 0;
 	this.enrageAnimation = 0;
+	this.hamperAnimation = 0;
 	
 	this.armorRank = 0;
 	this.armor = 3;
@@ -861,7 +864,9 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
-
+		//draw hamper
+		ctx.drawImage(heroImages[9], xPos + 53, yPos, 37, 35);
+		
 		if(pl.defenseAbility[2] === 1) {
 			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
@@ -894,7 +899,9 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
-
+		//draw hamper
+		ctx.drawImage(heroImages[9], xPos + 53, yPos, 37, 35);
+		
 		if(pl.defenseAbility[5] === 1) {
 			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
@@ -927,7 +934,9 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
-
+		//draw hamper
+		ctx.drawImage(heroImages[9], xPos + 53, yPos, 37, 35);
+		
 		if(pl.defenseAbility[8] === 1) {
 			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
@@ -1215,6 +1224,17 @@ function updateGameArea() {
 			ctx.drawImage(character[6], 100, 435, 105, 115);
 		}
 		
+		//draw hamper
+		if (pl.hamperAnimation === 1) {
+			pl.attackMotion++;
+			var frameLength = 15;
+			if (pl.attackMotion < frameLength) {
+				ctx.drawImage(heroImages[9], 320 + pl.attackMotion * 10, 80, 80, 80);
+			} else {
+				pl.hamperAnimation = 0;
+			}
+		}
+		
 		//draw border bars
 		ctx.fillStyle = "#C0C0C0";
 		ctx.fillRect(10, 10, 580, 30);
@@ -1271,6 +1291,7 @@ function updateGameArea() {
 			ctx.fillStyle = "grey";
 		}
 		ctx.fillText("(H)amper", 300, 510);
+		ctx.drawImage(heroImages[9], 380, 490, 30, 28);
 		ctx.fillStyle = "white";
 		if(pl.viperStrike === 0) {
 			ctx.fillStyle = "grey";
@@ -2096,6 +2117,8 @@ window.onkeyup = function(e) {
 				//hamper
 				if(pl.hamper > 0) {
 					awaitingInput = 0;
+					pl.hamperAnimation = 1;
+					pl.attackMotion = 0;
 					var armorReduction = target.armor - pl.armorPen;
 					if(pl.armorPen > target.armor) {
 						armorReduction = 0;
@@ -2343,6 +2366,7 @@ window.onkeyup = function(e) {
 				pl.attacking = 0;
 				pl.rampageAttack = 0;
 				pl.enrageAnimation = 0;
+				pl.hamperAnimation = 0;
 				combatHandle();
 			}
 		}

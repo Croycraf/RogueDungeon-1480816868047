@@ -41,6 +41,16 @@ function start() {
 function loadImages() {
 	var imgLoaded = false;
 	ctx = gameArea.context;
+
+	//basic images
+	basicImage = new Array();
+	basicImage.onload = function () {
+		imgLoaded = true;
+	}
+	basicImage[0] = new Image();
+	basicImage[0].src = "images/basic tile.png";
+	basicImage[1] = new Image();
+	basicImage[1].src = "images/enemy name border.jpg";
 	
 	//staircase images
 	staircase = new Array();
@@ -59,14 +69,6 @@ function loadImages() {
 	staircase[4].src = "images/staircase/staircase bottom top.png";
 	staircase[5] = new Image();
 	staircase[5].src = "images/staircase/staircase bottom bottom.png";
-	
-	//basic tile images
-	tiles = new Array();
-	tiles.onload = function () {
-		imgLoaded = true;
-	}
-	tiles[0] = new Image();
-	tiles[0].src = "images/basic tile.png";
 	
 	//character images
 	character = new Array();
@@ -299,6 +301,7 @@ function enemy(x, y) {
 	diffScale = Math.pow(1.1, dungeonLevel);
 	this.type = "Skeleton";
 	this.hp = Math.floor(diffScale * 50);
+	this.starthp = this.hp;
 	this.speed = Math.floor(diffScale * 30);
 	this.speedEntropy = Math.floor(Math.random() * 100);
 	this.baseDamage = Math.floor(diffScale * 5);
@@ -380,7 +383,7 @@ function floorTile(x, y) {
 			}
 		}
 		else {
-			ctx.drawImage(tiles[0], this.x, this.y);
+			ctx.drawImage(basicImage[0], this.x, this.y);
 		}
 	};
 	
@@ -985,16 +988,33 @@ function updateGameArea() {
 		ctx.fillRect(10, 10, 580, 30);
 		ctx.fillRect(10, 560, 580, 30);
 		
-		//draw enemy name
+		//draw player health bar
 		ctx.fillStyle = "black";
-		ctx.font = "20px Consolas";
-		ctx.fillText(target.type, 350, 30);
+		ctx.fillRect(15, 565, 270, 20);
+		ctx.fillStyle = "red";
+		ctx.fillRect(15, 565, (pl.hp / 100) * 270, 20);
+		
+		//draw enemy health bar
+		ctx.fillStyle = "black";
+		ctx.fillRect(315, 15, 270, 20);
+		ctx.fillStyle = "red";
+		ctx.fillRect(315, 15, (target.hp / target.starthp) * 270, 20);
+		
+		//draw enemy name
+		ctx.drawImage(basicImage[1], 358, 265, 170, 30);
+		ctx.fillStyle = "silver";
+		ctx.font = "20px Lucida Console";
+		var xPixelOffset = 0;
+		if (target.type === "Skeleton") {
+			xPixelOffset = 22;
+		}
+		ctx.fillText(target.type, 374 + xPixelOffset, 286);
 		
 		//draw hitpoints
 		ctx.font = "20px Consolas";
-		ctx.fillStyle = "black";
-		ctx.fillText("HP: " + target.hp, 500, 30);
-		ctx.fillText("HP: " + pl.hp, 30, 580);
+		ctx.fillStyle = "white";
+		ctx.fillText("HP: " + target.hp, 330, 31);
+		ctx.fillText("HP: " + pl.hp, 30, 581);
 		
 		//draw ability window
 		ctx.fillStyle = "black";
@@ -2047,7 +2067,7 @@ window.onkeyup = function(e) {
 //AJAX functions
 function getOutput() {
 	getRequest(
-		"/ajax.php",
+		"ajax.php",
 		drawOutput,
 		drawError
 	);

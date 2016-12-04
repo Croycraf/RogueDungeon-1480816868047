@@ -456,7 +456,22 @@ function floorTile(x, y) {
 function updateGameArea() {
 	gameArea.clear();
 	
-	if(gameOver === 1) {
+	if(scoreboardActive === 1) {
+		ctx.fillStyle = "black";
+		ctx.fillRect(0,0, 600, 600);
+		ctx.fillStyle = "white";
+		ctx.font = "20px Consolas";
+		ctx.fillText("High Scores", 250, 20);
+		if(serverConnection === 1) {
+			ctx.fillText("Success", 20, 40);
+			drawOutput(highScoresText);
+		}
+		else {
+			ctx.fillText("Failed", 20, 40);
+			drawError();
+		}
+	}
+	else if(gameOver === 1) {
 		//draw gameover screen
 		ctx = gameArea.context;
 		ctx.fillStyle = "black";
@@ -1228,21 +1243,6 @@ function updateGameArea() {
 		ctx.fillText("target entropy: " + target.speedEntropy, 10, 110);
 		ctx.fillText("target turn storage " + target.turnStorage, 10, 130);
 	}
-	else if(scoreboardActive === 1) {
-		ctx.fillStyle = "black";
-		ctx.fillRect(0,0, 600, 600);
-		ctx.fillStyle = "white";
-		ctx.font = "20px Consolas";
-		ctx.fillText("High Scores", 250, 20);
-		if(serverConnection === 1) {
-			ctx.fillText("Success", 20, 40);
-			drawOutput(highScoresText);
-		}
-		else {
-			ctx.fillText("Failed", 20, 40);
-			drawError();
-		}
-	}
 	else {
 		for(var i = 0; i < mainHall.length; i++) {
 			mainHall[i].update();
@@ -1672,7 +1672,12 @@ window.onkeyup = function(e) {
 	
 	var key = e.keyCode ? e.keyCode : e.which;
 	
-	if(gameOver === 1) {
+	if(scoreboardActive === 1) {
+		if(key === 75) {
+			scoreboardActive = 0;
+		}
+	}
+	else if(gameOver === 1) {
 		//block all inputs
 		if(sentHighScores === 0) {
 			if(key === 8) {
@@ -1859,11 +1864,6 @@ window.onkeyup = function(e) {
 				pl.speedRank = pl.speedRank + 1;
 				pl.speedCost = Math.floor(pl.speedCost * pl.priceScale);
 			}
-		}
-	}
-	else if(scoreboardActive === 1) {
-		if(key === 75) {
-			scoreboardActive = 0;
 		}
 	}
 	else if(combatActive === 1) {

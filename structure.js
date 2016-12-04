@@ -1022,7 +1022,7 @@ function updateGameArea() {
 		//draw potions
 		ctx.fillStyle = "white";
 		ctx.font = "17px Consolas";
-		ctx.fillText("Buy (P)otions", 200, 180);
+		ctx.fillText("(P)otions", 200, 180);
 		ctx.fillText("Cost: " + pl.potionCost, 200, 200);
 		ctx.fillText("Current Pots: " + pl.potions, 345, 190);
 		

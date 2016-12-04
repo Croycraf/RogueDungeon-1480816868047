@@ -10,8 +10,8 @@
 	
 	$q = $_REQUEST["q"];
 	
-	$name = $_REQUEST["name"];
-	echo $name;
+	/* $name = $_REQUEST["name"];
+	echo $name; */
 	
 	if($q == "score") {
 		$sql = "SELECT * FROM highscores ORDER BY score DESC";
@@ -33,12 +33,12 @@
 		}
 	}
 	else {
-		/*
+		
 		$score = $_REQUEST["score"];
 		$floor = $_REQUEST["floor"];
 		$name = $_REQUEST["name"];
 		echo "Your Input: " . $name . " " . $score . " " . $floor
-		*/
+		
 	}
 	$conn->close();
 ?>

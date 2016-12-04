@@ -442,7 +442,7 @@ function updateGameArea() {
 		ctx.font = "40px Consolas";
 		ctx.fillText("GAME OVER", 200, 200);
 		ctx.fillText("Score: " + score, 200, 300);
-		ctx.fllStyle = "white";
+		ctx.fillStyle = "white";
 		ctx.fillRect(100, 300, 400, 30);
 		ctx.fillStyle = "black";
 		ctx.fillText(pl.name, 100, 300);

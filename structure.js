@@ -473,7 +473,7 @@ function updateGameArea() {
 			drawError();
 		}
 		ctx.fillStyle = "black";
-		ctx.fillRect(0,0,600,30);
+		ctx.fillRect(0,0,600,50);
 		ctx.fillStyle = "white";
 		ctx.font = "20px Consolas";
 		ctx.fillText("High Scores", 250, 20);

@@ -42,6 +42,16 @@ function loadImages() {
 	var imgLoaded = false;
 	ctx = gameArea.context;
 	
+	//basic images
+	basicImage = new Array();
+	basicImage.onload = function () {
+		imgLoaded = true;
+	}
+	basicImage[0] = new Image();
+	basicImage[0].src = "images/basic tile.png";
+	basicImage[1] = new Image();
+	basicImage[1].src = "images/enemy name border.jpg";
+	
 	//staircase images
 	staircase = new Array();
 	staircase.onload = function () {
@@ -59,14 +69,6 @@ function loadImages() {
 	staircase[4].src = "images/staircase/staircase bottom top.png";
 	staircase[5] = new Image();
 	staircase[5].src = "images/staircase/staircase bottom bottom.png";
-	
-	//basic tile images
-	tiles = new Array();
-	tiles.onload = function () {
-		imgLoaded = true;
-	}
-	tiles[0] = new Image();
-	tiles[0].src = "images/basic tile.png";
 	
 	//character images
 	character = new Array();
@@ -109,6 +111,18 @@ function loadImages() {
 	skeleton[1].src = "images/enemies/skeleton face left.png";
 	skeleton[2] = new Image();
 	skeleton[2].src = "images/enemies/skeleton corpse.png";
+	skeleton[3] = new Image();
+	skeleton[3].src = "images/enemies/skeleton attack stance 1.png";
+	skeleton[4] = new Image();
+	skeleton[4].src = "images/enemies/skeleton attack stance 2.png";
+	skeleton[5] = new Image();
+	skeleton[5].src = "images/enemies/skeleton attack stance 3.png";
+	skeleton[6] = new Image();
+	skeleton[6].src = "images/enemies/skeleton attack stance 4.png";
+	skeleton[7] = new Image();
+	skeleton[7].src = "images/enemies/skeleton attack stance 5.png";
+	skeleton[8] = new Image();
+	skeleton[8].src = "images/enemies/skeleton attack stance 6.png";
 }
 
 var gameArea = {
@@ -299,6 +313,7 @@ function enemy(x, y) {
 	diffScale = Math.pow(1.1, dungeonLevel);
 	this.type = "Skeleton";
 	this.hp = Math.floor(diffScale * 50);
+	this.starthp = this.hp;
 	this.speed = Math.floor(diffScale * 30);
 	this.speedEntropy = Math.floor(Math.random() * 100);
 	this.baseDamage = Math.floor(diffScale * 5);
@@ -311,6 +326,9 @@ function enemy(x, y) {
 	this.poisonDamageTaken = [];
 	this.poisonHitsTaken = 0;
 	this.isBounty = 0;
+	this.renderAttackImage = 0;
+	this.renderAttackImageStance = 0;
+	this.stanceUp = 1;
 	
 	this.alive = 1;
 }
@@ -380,7 +398,7 @@ function floorTile(x, y) {
 			}
 		}
 		else {
-			ctx.drawImage(tiles[0], this.x, this.y);
+			ctx.drawImage(basicImage[0], this.x, this.y);
 		}
 	};
 	
@@ -973,8 +991,24 @@ function updateGameArea() {
 		ctx.fillRect(10, 10, 580, 580);
 		
 		//draw enemy
-		if (target.type === "Skeleton") {
-			ctx.drawImage(skeleton[1], 380, 75, 130, 180);
+		if (target.type === "Skeleton") {	
+			if (target.renderAttackImage === 1) {
+				if (target.stanceUp) {
+					target.renderAttackImageStance++;
+					if (target.renderAttackImageStance === 6) {
+						target.stanceUp = 0;
+					}
+				} else {
+					target.renderAttackImageStance--;
+					if (target.renderAttackImageStance === 1) {
+						target.stanceUp = 1;
+						target.renderAttackImage = 0;
+					}
+				}
+				ctx.drawImage(skeleton[2 + target.renderAttackImageStance], 380, 75, 130, 180);
+			} else {
+				ctx.drawImage(skeleton[1], 380, 75, 130, 180);
+			}
 		}
 		
 		//draw player
@@ -985,16 +1019,33 @@ function updateGameArea() {
 		ctx.fillRect(10, 10, 580, 30);
 		ctx.fillRect(10, 560, 580, 30);
 		
-		//draw enemy name
+		//draw player health bar
 		ctx.fillStyle = "black";
-		ctx.font = "20px Consolas";
-		ctx.fillText(target.type, 350, 30);
+		ctx.fillRect(15, 565, 270, 20);
+		ctx.fillStyle = "red";
+		ctx.fillRect(15, 565, (pl.hp / 100) * 270, 20);
+		
+		//draw enemy health bar
+		ctx.fillStyle = "black";
+		ctx.fillRect(315, 15, 270, 20);
+		ctx.fillStyle = "red";
+		ctx.fillRect(315, 15, (target.hp / target.starthp) * 270, 20);
+		
+		//draw enemy name
+		ctx.drawImage(basicImage[1], 358, 265, 170, 30);
+		ctx.fillStyle = "silver";
+		ctx.font = "20px Lucida Console";
+		var xPixelOffset = 0;
+		if (target.type === "Skeleton") {
+			xPixelOffset = 22;
+		}
+		ctx.fillText(target.type, 374 + xPixelOffset, 286);
 		
 		//draw hitpoints
 		ctx.font = "20px Consolas";
-		ctx.fillStyle = "black";
-		ctx.fillText("HP: " + target.hp, 500, 30);
-		ctx.fillText("HP: " + pl.hp, 30, 580);
+		ctx.fillStyle = "white";
+		ctx.fillText("HP: " + target.hp, 330, 31);
+		ctx.fillText("HP: " + pl.hp, 30, 581);
 		
 		//draw ability window
 		ctx.fillStyle = "black";
@@ -1514,6 +1565,9 @@ function targetTurn() {
 	}
 	
 	if(target.hp > 0) {
+		target.renderAttackImage = 1;
+		target.renderAttackImageStance = 0;
+		target.stanceUp = 1;
 		var armorReduction = Math.floor((pl.armor + pl.armorRank) * pl.bonusArmor);
 		var damageDealt = Math.floor((Math.random() * target.damageRange) * (1 + 0.2 * pl.isEnraged)) + target.baseDamage - armorReduction;
 		if(damageDealt < 0) {

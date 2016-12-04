@@ -30,7 +30,7 @@
 		}
 	}
 	else {
-		echo "not score";
+		echo "not score" . $q;
 	}
 	$conn->close();
 ?>

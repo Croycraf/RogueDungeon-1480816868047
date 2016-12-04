@@ -1,0 +1,1892 @@
+/*globals TILE_SIZE:true TILE_SPACE:true dungeonLevel:true gold:true ctx:true position:true pl tempHall:true mainHall sideHalls numHalls isVertical:true noEnd:true temp:true score:true combatActive:true shopActive:true awaitingInput:true gameOver:true diffScale:true enemies numEnemies:true abilitiesActive:true abilitySelected:true columnSelected:true abilityError:true displayNewPoint:true*/
+/*eslint-env browser, shelljs*/
+function start() {
+	TILE_SIZE = 40;
+	TILE_SPACE = 50;
+	
+	//general globals
+	dungeonLevel = 1;
+	gold = 0;
+	score = 0;
+	
+	//hero ability globals
+	abilitySelected = "null";
+	columnSelected = "null";
+	abilityError = "";
+	displayNewPoint = 0;
+	
+	//game state globals
+	combatActive = 0;
+	shopActive = 0;
+	abilitiesActive = 0;
+	awaitingInput = 0;
+	gameOver = 0;
+	
+	loadImages();
+	gameArea.start();
+	pl = new player(100, 120);
+	generateRoom();
+}
+
+function loadImages() {
+	var imgLoaded = false;
+	ctx = gameArea.context;
+	staircase = new Array();
+	staircase.onload = function () {
+		imgLoaded = true;
+	}
+	staircase[0] = new Image();
+	staircase[0].src = "images/staircase top right.png";
+	staircase[1] = new Image();
+	staircase[1].src = "images/staircase top left.png";
+	staircase[2] = new Image();
+	staircase[2].src = "images/staircase bottom right.png";
+	staircase[3] = new Image();
+	staircase[3].src = "images/staircase bottom left.png";
+	staircase[4] = new Image();
+	staircase[4].src = "images/staircase bottom top.png";
+	staircase[5] = new Image();
+	staircase[5].src = "images/staircase bottom bottom.png";
+}
+
+var gameArea = {
+	canvas : document.createElement("canvas"),
+	start : function() {
+		this.canvas.width = 600;
+		this.canvas.height = 600;
+		this.context = this.canvas.getContext("2d");
+		document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+		this.interval = setInterval(updateGameArea, 20);
+		//generateRoom();
+	},
+	clear : function() {
+		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+};
+
+function player(x, y) {
+	this.width = TILE_SIZE * 2 / 3;
+	this.height = TILE_SIZE * 2 / 3;
+	this.x = x;
+	this.y = y;
+	
+	this.update = function() {
+		ctx = gameArea.context;
+		ctx.fillStyle = "green";
+		ctx.fillRect(this.x + 5, this.y + 5, this.width, this.height);
+	};
+	
+	position = null;
+	
+	//combat variables and related shop variables
+	this.hp = 100;
+	this.speedEntropy = Math.floor(Math.random() * 100);
+	this.turnStorage = 0;
+	
+	this.priceScale = 1.2;
+	
+	this.speed = 45;
+	this.speedRank = 0;
+	this.speedCost = 100;
+	
+	this.weaponRank = 0;
+	this.baseDamage = 5;
+	this.damageRange = 5;
+	this.weaponCost = 100;
+	
+	this.armorRank = 0;
+	this.armor = 3;
+	this.armorCost = 100;
+	
+	this.potionRank = 0;
+	this.potions = 5;
+	this.potionUpgradeCost = 100;
+	this.potionCost = 50;
+	
+	this.damageTaken = [];
+	this.hitsTaken = 0;
+	
+	//hero ability variables
+	this.abilityPoints = 0;
+	this.offenseAbility = [0,0,0,0,0,0,0,0,0,0];
+	this.defenseAbility = [0,0,0,0,0,0,0,0,0,0];
+	this.utilityAbility = [0,0,0,0,0,0,0,0,0,0];
+	this.offenseTier = 0;
+	this.defenseTier = 0;
+	this.utilityTier = 0;
+	this.rampage = 0;
+	this.hamper = 0;
+	this.viperStrike = 0;
+	this.bonusDamage = 1;
+	this.armorPen = 0;
+	this.bonusArmor = 1;
+	this.regen = 0;
+	this.bonusGold = 1;
+	this.bonusSpeed = 1;
+	this.healed = 0;
+	this.isEnraged = 0;
+}
+
+function enemy(x, y) {
+	this.width = TILE_SIZE * 2 / 3;
+	this.height = TILE_SIZE * 2 / 3;
+	this.x = x;
+	this.y = y;
+	
+	this.update = function() {
+		ctx = gameArea.context;
+		ctx.fillStyle = "purple";
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	};
+	
+	position = null;
+	
+	diffScale = Math.pow(1.1, dungeonLevel);
+	this.type = "Skeleton";
+	this.hp = Math.floor(diffScale * 50);
+	this.speed = Math.floor(diffScale * 30);
+	this.speedEntropy = Math.floor(Math.random() * 100);
+	this.baseDamage = Math.floor(diffScale * 5);
+	this.damageRange = Math.floor(diffScale * 5);
+	this.armor = Math.floor(diffScale);
+	this.turnStorage = 0;
+	this.poison = 0;
+	this.hitsTaken = 0;
+	this.damageTaken = [];
+	this.poisonDamageTaken = [];
+	this.poisonHitsTaken = 0;
+	this.isBounty = 0;
+	
+	this.alive = 1;
+}
+
+function startTile(x, y) {
+	pl.update();
+	this.width = TILE_SIZE;
+	this.height = TILE_SIZE;
+	this.x = x;
+	this.y = y;
+	
+	this.alreadyRandomized = 0;
+	this.rand = 0;
+	
+	this.update = function() {
+		ctx = gameArea.context;
+		if (this._right !== "null") { // player exits to the right
+			ctx.drawImage(staircase[0], this.x, this.y);
+		} else if (this._left !== "null") { // player exits to the left
+			ctx.drawImage(staircase[1], this.x, this.y);
+		} else { // player exits top or bottom
+			// pick a random direction
+			if (this.alreadyRandomized === 0) {
+				rand = Math.floor(Math.random() * 2); 
+				this.alreadyRandomized = 1;
+			}
+			ctx.drawImage(staircase[rand], this.x, this.y);
+		}
+	};
+	
+	this._left = "null";
+	this._right = "null";
+	this._up = "null";
+	this._down = "null";
+	
+	this.containedEnemy = "null";
+}
+
+function floorTile(x, y) {
+	this.width = TILE_SIZE;
+	this.height = TILE_SIZE;
+	this.x = x;
+	this.y = y;
+
+	this.alreadyRandomized = 0;
+	this.rand = 0;
+	
+	this.update = function() {
+		ctx = gameArea.context;
+		ctx.fillStyle = "grey";
+		if(this.isEnd === 1) {
+			if (this._right !== "null") { // player enters from the right
+				ctx.drawImage(staircase[2], this.x, this.y);
+			} else if (this._left !== "null") { // player enters from the left
+				ctx.drawImage(staircase[3], this.x, this.y);
+			} else if (this._up !== "null") { // player enters from top
+				ctx.drawImage(staircase[4], this.x, this.y);
+			} else if (this._bottom !== "null") { // player enters from bottom
+				ctx.drawImage(staircase[5], this.x, this.y);	
+			}
+		}
+		else {
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}
+	};
+	
+	this._left = "null";
+	this._right = "null";
+	this._up = "null";
+	this._down = "null";
+	
+	this.isEnd = 0;
+	
+	this.containedEnemy = "null";
+}
+
+function updateGameArea() {
+	gameArea.clear();
+	
+	if(gameOver === 1) {
+		//draw gameover screen
+		ctx = gameArea.context;
+		ctx.fillStyle = "black";
+		ctx.fillRect(0, 0, 600, 600);
+		ctx.fillStyle = "red";
+		ctx.font = "40px Consolas";
+		ctx.fillText("GAME OVER", 200, 200);
+		ctx.fillText("Score: " + score, 200, 300);
+	}
+	else if(abilitiesActive === 1) {
+		//draw hero abilities screen
+		ctx = gameArea.context;
+		
+		//draw menu title
+		ctx.fillStyle = "white";
+		ctx.font = "20px Consolas";
+		ctx.fillText("Hero Abilities", 120, 30);
+		ctx.fillText("Points: " + pl.abilityPoints, 360, 30);
+		
+		//draw offense section
+		ctx.fillStyle = "red";
+		ctx.fillRect(15, 40, 180, 355);
+		
+		//draw defensive section
+		ctx.fillStyle = "blue";
+		ctx.fillRect(210, 40, 180, 355);
+		
+		//draw utility section
+		ctx.fillStyle = "yellow";
+		ctx.fillRect(405, 40, 180, 355);
+		
+		//title bg
+		ctx.fillStyle = "black";
+		ctx.fillRect(15, 40, 180, 30);
+		ctx.fillRect(210, 40, 180, 30);
+		ctx.fillRect(405, 40, 180, 30);
+		
+		//highlight ability selection
+		var xPos = 0;
+		var yPos = 0;
+		ctx.fillStyle = "green";
+		if(abilitySelected === 0) {
+			ctx.fillRect(15, 40, 180, 30);
+			xPos = 30;
+			yPos = 80 + 80 * pl.offenseTier;
+		}
+		else if(abilitySelected === 1) {
+			ctx.fillRect(210, 40, 180, 30);
+			xPos = 225;
+			yPos = 80 + 80 * pl.defenseTier;
+		}
+		else if(abilitySelected === 2) {
+			ctx.fillRect(405, 40, 180, 30);
+			xPos = 420;
+			yPos = 80 + 80 * pl.utilityTier;
+		}
+		
+		//highlight column selection
+		ctx.fillStyle = "green";
+		if(columnSelected === 0) {
+			//left
+			if((abilitySelected === 0 && pl.offenseTier < 3) || (abilitySelected === 1 && pl.defenseTier < 3) || (abilitySelected === 2 && pl.utilityTier < 3)) {
+				ctx.fillRect(xPos - 5, yPos - 5, 50, 50);
+			}
+			else {
+				ctx.fillRect(xPos - 15, yPos - 5, 180, 60);
+			}
+		}
+		else if(columnSelected === 1) {
+			//middle
+			if((abilitySelected === 0 && pl.offenseTier < 3) || (abilitySelected === 1 && pl.defenseTier < 3) || (abilitySelected === 2 && pl.utilityTier < 3)) {
+				ctx.fillRect(xPos - 5 + 55, yPos - 5, 50, 50);
+			}
+			else {
+				ctx.fillRect(xPos - 15, yPos - 5, 180, 60);
+			}
+		}
+		else if(columnSelected === 2) {
+			//right
+			if((abilitySelected === 0 && pl.offenseTier < 3) || (abilitySelected === 1 && pl.defenseTier < 3) || (abilitySelected === 2 && pl.utilityTier < 3)) {
+				ctx.fillRect(xPos - 5 + 110, yPos - 5, 50, 50);
+			}
+			else {
+				ctx.fillRect(xPos - 15, yPos - 5, 180, 60);
+			}
+		}
+		
+		//draw description pop-up
+		ctx.fillStyle = "grey";
+		ctx.fillRect(15, 405, 570, 180);
+		
+		//fill description pop-up
+		ctx.fillStyle = "white";
+		if(abilitySelected === 0) {
+			//offense
+			if(pl.offenseTier < 3) {
+				//not ult
+				if(columnSelected === 0) {
+					ctx.fillText("Wrath - Passive", 20, 425);
+					ctx.fillText("Deal 20% increase damage.", 30, 445);
+					ctx.fillText("Stacks with additional ranks.", 30, 465);
+				}
+				else if(columnSelected === 1) {
+					ctx.fillText("Rampage - Active", 20, 425);
+					ctx.fillText("Perform an attack with +5 base damage and", 30, 445);
+					ctx.fillText("+5 damage range.", 30, 465);
+					ctx.fillText("Bonuses stack with additional ranks.", 30, 485);
+				}
+				else if(columnSelected === 2) {
+					ctx.fillText("Sunder - Passive", 20, 425);
+					ctx.fillText("Gain +2 armor penetration.", 30, 445);
+					ctx.fillText("Stacks with additonal ranks.", 30, 465);
+				}
+			}
+			else {
+				ctx.fillText("Enrage - Active", 20, 425);
+				ctx.fillText("Take 2 additional turns after this one and deal", 30, 445);
+				ctx.fillText("30% increased damage until combat ends.", 30, 465);
+				ctx.fillText("Receive 20% increase damage until combat ends.", 30, 485);
+			}
+		}
+		else if(abilitySelected === 1) {
+			//defense
+			if(pl.defenseTier < 3) {
+				//not ult
+				if(columnSelected === 0) {
+					ctx.fillText("Barrier - Passive", 20, 425);
+					ctx.fillText("Gain 20% increased armor.", 30, 445);
+					ctx.fillText("Stacks with additional ranks.", 30, 465);
+				}
+				else if(columnSelected === 1) {
+					ctx.fillText("Hamper - Active", 20, 425);
+					ctx.fillText("Deal standard attack damage.", 30, 445);
+					ctx.fillText("Reduce target's turn entropy by 20.", 30, 465);
+					ctx.fillText("Stacks with additional ranks.", 30, 485);
+				}
+				else if(columnSelected === 2) {
+					ctx.fillText("Regeneration - Passive", 20, 425);
+					ctx.fillText("Heal 2 HP per turn.", 30, 445);
+					ctx.fillText("Stacks with additional ranks.", 30, 465);
+				}
+			}
+			else {
+				ctx.fillText("Crush - Active", 20, 425);
+				ctx.fillText("Deal standard attack damage.", 30, 445);
+				ctx.fillText("Stun target (reduce target's turn entropy", 30, 465);
+				ctx.fillText("and storage to 0).", 30, 485);
+			}
+		}
+		else if(abilitySelected === 2) {
+			//utility
+			if(pl.utilityTier < 3) {
+				//not ult
+				if(columnSelected === 0) {
+					ctx.fillText("Midas Touch - Passive", 20, 425);
+					ctx.fillText("Gain 20% increased gold from all sources.", 30, 445);
+					ctx.fillText("Stacks with additional ranks.", 30, 465);
+				}
+				else if(columnSelected === 1) {
+					ctx.fillText("Viper Strike - Active", 20, 425);
+					ctx.fillText("Attack with -2 base damage and -2 damage range.", 30, 445);
+					ctx.fillText("Apply 2 poison to target if damage is dealt.", 30, 465);
+					ctx.fillText("Stacks with additonal ranks.", 30, 485);
+				}
+				else if(columnSelected === 2) {
+					ctx.fillText("Quickness - Passive", 20, 425);
+					ctx.fillText("Gain 20% incrased speed.", 30, 445);
+					ctx.fillText("Stacks with additional ranks.", 30, 465);
+				}
+			}
+			else {
+				ctx.fillText("Seek Bounty - Active", 20, 425);
+				ctx.fillText("Take an additional turn after this one.", 30, 445);
+				ctx.fillText("Receive 200% increased gold from target.", 30, 465);
+			}
+		}
+		
+		if(columnSelected !== "null") {
+			ctx.fillText("(A)ccept", 20, 575);
+			ctx.fillStyle = "red";
+			ctx.fillText(abilityError, 130, 575);
+		}
+
+		//draw section titles
+		ctx.fillStyle = "white";
+		ctx.fillText("(O)ffense", 25, 60);
+		ctx.fillText("(D)efense", 220, 60);
+		ctx.fillText("(U)tility", 415, 60);
+		
+		//populate ability sections
+		xPos = 30;
+		yPos = 80;
+		
+		//draw offensive abilities
+		ctx.fillStyle = "grey";
+		
+		//tier 1
+		if(pl.offenseAbility[0] === 1) {
+			ctx.fillStyle = "green";
+		}
+		ctx.fillRect(xPos, yPos, 40, 40);
+		if(pl.offenseAbility[1] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+		ctx.lineTo(xPos + 50 + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+		ctx.closePath();
+		ctx.fill();
+		if(pl.offenseAbility[2] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		
+		//tier 2
+		yPos = 160;
+		if(pl.offenseAbility[3] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos, yPos, 40, 40);
+		if(pl.offenseAbility[4] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+		ctx.lineTo(xPos + 50 + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+		ctx.closePath();
+		ctx.fill();
+		if(pl.offenseAbility[5] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		
+		//tier 3
+		yPos = 240;
+		if(pl.offenseAbility[6] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos, yPos, 40, 40);
+		if(pl.offenseAbility[7] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+		ctx.lineTo(xPos + 50 + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+		ctx.closePath();
+		ctx.fill();
+		if(pl.offenseAbility[8] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		
+		//tier 4
+		yPos = 300;
+		if(pl.offenseAbility[9] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 35, yPos + 40);
+		ctx.lineTo(xPos + 35 + 40, yPos);
+		ctx.lineTo(xPos + 35 + 80, yPos + 40);
+		ctx.lineTo(xPos + 35 + 40, yPos + 80);
+		ctx.closePath();
+		ctx.fill();
+		
+		//draw defensive abilities
+		xPos = 225;
+		//tier 1
+		yPos = 80;
+		if(pl.defenseAbility[0] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos, yPos, 40, 40);
+		if(pl.defenseAbility[1] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+		ctx.lineTo(xPos + 50 + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+		ctx.closePath();
+		ctx.fill();
+		if(pl.defenseAbility[2] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		
+		//tier 2
+		yPos = 160;
+		if(pl.defenseAbility[3] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos, yPos, 40, 40);
+		if(pl.defenseAbility[4] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+		ctx.lineTo(xPos + 50 + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+		ctx.closePath();
+		ctx.fill();
+		if(pl.defenseAbility[5] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		
+		//tier 3
+		yPos = 240;
+		if(pl.defenseAbility[6] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos, yPos, 40, 40);
+		if(pl.defenseAbility[7] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+		ctx.lineTo(xPos + 50 + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+		ctx.closePath();
+		ctx.fill();
+		if(pl.defenseAbility[8] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		
+		//tier 4
+		yPos = 300;
+		if(pl.defenseAbility[9] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 35, yPos + 40);
+		ctx.lineTo(xPos + 35 + 40, yPos);
+		ctx.lineTo(xPos + 35 + 80, yPos + 40);
+		ctx.lineTo(xPos + 35 + 40, yPos + 80);
+		ctx.closePath();
+		ctx.fill();
+		
+		//draw utility abilities
+		xPos = 420;
+		//tier 1
+		yPos = 80;
+		if(pl.utilityAbility[0] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos, yPos, 40, 40);
+		if(pl.utilityAbility[1] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+		ctx.lineTo(xPos + 50 + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+		ctx.closePath();
+		ctx.fill();
+		if(pl.utilityAbility[2] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		
+		//tier 2
+		yPos = 160;
+		if(pl.utilityAbility[3] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos, yPos, 40, 40);
+		if(pl.utilityAbility[4] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+		ctx.lineTo(xPos + 50 + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+		ctx.closePath();
+		ctx.fill();
+		if(pl.utilityAbility[5] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		
+		//tier 3
+		yPos = 240;
+		if(pl.utilityAbility[6] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos, yPos, 40, 40);
+		if(pl.utilityAbility[7] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+		ctx.lineTo(xPos + 50 + 50, yPos + 20);
+		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+		ctx.closePath();
+		ctx.fill();
+		if(pl.utilityAbility[8] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		
+		//tier 4
+		yPos = 300;
+		if(pl.utilityAbility[9] === 1) {
+			ctx.fillStyle = "green";
+		}
+		else {
+			ctx.fillStyle = "grey";
+		}
+		ctx.beginPath();
+		ctx.moveTo(xPos + 35, yPos + 40);
+		ctx.lineTo(xPos + 35 + 40, yPos);
+		ctx.lineTo(xPos + 35 + 80, yPos + 40);
+		ctx.lineTo(xPos + 35 + 40, yPos + 80);
+		ctx.closePath();
+		ctx.fill();
+	}
+	else if(shopActive === 1) {
+		//draw shop screen
+		
+		//draw background
+		ctx = gameArea.context;
+		ctx.fillStyle = "grey";
+		ctx.fillRect(10, 10, 580, 580);
+		
+		//draw gold
+		ctx.font = "20px Consolas";
+		ctx.fillStyle = "white";
+		ctx.fillText("Gold: " + gold, 15, 50);
+		
+		//draw weapon upgrade
+		ctx.fillStyle = "black";
+		ctx.font = "20px Consolas";
+		ctx.fillText("(W)eapon", 20, 400);
+		ctx.fillText("Upgrade", 20, 420);
+		ctx.fillText("Cost: " + pl.weaponCost, 20, 440);
+		ctx.fillText("Current Rank: " + pl.weaponRank, 20, 460);
+		
+		//draw speed upgrade
+		ctx.fillStyle = "black";
+		ctx.font = "20px Consolas";
+		ctx.fillText("Sp(e)ed", 20, 200);
+		ctx.fillText("Upgrade", 20, 220);
+		ctx.fillText("Cost: " + pl.speedCost, 20, 240);
+		ctx.fillText("Current Rank: " + pl.speedRank, 20, 260);
+		
+		//draw armor upgrade
+		ctx.fillStyle = "black";
+		ctx.font = "20px Consolas";
+		ctx.fillText("(A)rmor", 210, 400);
+		ctx.fillText("Upgrade", 210, 420);
+		ctx.fillText("Cost: " + pl.armorCost, 210, 440);
+		ctx.fillText("Current Rank: " + pl.armorRank, 210, 460);
+		
+		//draw potions
+		ctx.fillStyle = "black";
+		ctx.font = "20px Consolas";
+		ctx.fillText("Buy (P)otions", 400, 200);
+		ctx.fillText("Cost: " + pl.potionCost, 400, 220);
+		ctx.fillText("Current Pots: " + pl.potions, 400, 240);
+		
+		//draw potion upgrade
+		ctx.fillStyle = "black";
+		ctx.font = "20px Consolas";
+		ctx.fillText("P(o)tion", 400, 400);
+		ctx.fillText("Upgrade", 400, 420);
+		ctx.fillText("Cost: " + pl.potionUpgradeCost, 400, 440);
+		ctx.fillText("Current Rank: " + pl.potionRank, 400, 460);
+	}
+	else if(combatActive === 1) {
+		//draw combat screen
+		
+		//draw background
+		ctx = gameArea.context;
+		ctx.fillStyle = "grey";
+		ctx.fillRect(10, 10, 580, 580);
+		
+		//draw enemy
+		ctx.fillStyle = "purple";
+		ctx.fillRect(330, 75, 150, 150);
+		
+		//draw player
+		ctx.fillStyle = "green";
+		ctx.fillRect(130, 450, 125, 125);
+		
+		//draw border bars
+		ctx.fillStyle = "white";
+		ctx.fillRect(10, 10, 580, 30);
+		ctx.fillRect(10, 560, 580, 30);
+		
+		//draw enemy name
+		ctx.fillStyle = "black";
+		ctx.font = "20px Consolas";
+		ctx.fillText(target.type, 350, 30);
+		
+		//draw hitpoints
+		ctx.font = "20px Consolas";
+		ctx.fillStyle = "black";
+		ctx.fillText("HP: " + target.hp, 500, 30);
+		ctx.fillText("HP: " + pl.hp, 30, 580);
+		
+		//draw ability window
+		ctx.fillStyle = "black";
+		ctx.fillRect(290, 390, 300, 200);
+		ctx.fillStyle = "white";
+		ctx.fillRect(300, 400, 290, 190);
+		
+		//fill ability window
+		ctx.fillStyle = "black";
+		ctx.font = "20px Consolas";
+		ctx.fillText("(A)ttack", 300, 420);
+		ctx.fillText("(P)otion (" + pl.potions + ")", 420, 420);
+		if(pl.rampage === 0) {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillText("(R)ampage", 300, 460);
+		ctx.fillStyle = "black";
+		if(pl.hamper === 0) {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillText("(H)amper", 300, 500);
+		ctx.fillStyle = "black";
+		if(pl.viperStrike === 0) {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillText("(V)iper", 300, 540);
+		ctx.fillText(" Strike", 300, 560);
+		ctx.fillStyle = "black";
+		if(pl.offenseAbility[9] === 0) {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillText("(E)nrage", 420, 460);
+		ctx.fillStyle = "black";
+		if(pl.defenseAbility[9] === 0) {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillText("(C)rush", 420, 500);
+		ctx.fillStyle = "black";
+		if(pl.utilityAbility[9] === 0) {
+			ctx.fillStyle = "grey";
+		}
+		ctx.fillText("(S)eek Bounty", 420, 540);
+		
+		//ability error
+		ctx.fillStyle = "red";
+		ctx.fillText(abilityError, 300, 380);
+		
+		//player damage taken
+		if(pl.hitsTaken > 0) {
+			for(var i = 0; i < pl.hitsTaken; i++) {
+				if(pl.damageTaken[i] === 0) {
+					ctx.fillStyle = "blue";
+				}
+				else {
+					ctx.fillStyle = "red";
+				}
+				ctx.fillText("-" + pl.damageTaken[i], 70, 550 - 20 * i);
+			}
+		}
+		
+		//player healed
+		ctx.fillStyle = "green";
+		if(pl.healed > 0) {
+			ctx.fillText("+" + pl.healed, 70, 550);
+		}
+		
+		//target damage taken
+		if(target.hitsTaken > 0) {
+			for(var i = 0; i < target.hitsTaken; i++) {
+				if(target.damageTaken[i] === 0) {
+					ctx.fillStyle = "blue";
+				}
+				else {
+					ctx.fillStyle = "red";
+				}
+				ctx.fillText("-" + target.damageTaken[i], 530, 60 + 20 * i);
+			}
+		}
+		
+		//target poison damage taken
+		ctx.fillStyle = "green";
+		if(target.poisonHitsTaken > 0) {
+			for(var i = 0; i < target.poisonHitsTaken; i++) {
+				ctx.fillText("-" + target.poisonDamageTaken[i], 490, 60 + 20 * i);
+			}
+		}
+		
+		//target poison stacks
+		ctx.fillStyle = "green";
+		if(target.poison > 0) {
+			ctx.fillText("Poison: " + target.poison, 370, 60);
+		}
+		
+		//fill debug info
+		ctx.fillStyle = "black";
+		ctx.font = "20px Consolas";
+		ctx.fillText("Player entropy: " + pl.speedEntropy, 10, 70);
+		ctx.fillText("Player turn storage: " + pl.turnStorage, 10, 90);
+		ctx.fillText("target entropy: " + target.speedEntropy, 10, 110);
+		ctx.fillText("target turn storage " + target.turnStorage, 10, 130);
+	}
+	else {
+		for(var i = 0; i < mainHall.length; i++) {
+			mainHall[i].update();
+		}
+		for(var i = 0; i < numHalls; i++) {
+			tempHall = sideHalls[i];
+			for(var j = 0; j < tempHall.length; j++) {
+				tempHall[j].update();
+			}
+		}
+		for(var i = 0; i < numEnemies; i++) {
+			enemies[i].update();
+		}
+		start.update();
+		pl.update();
+		
+		//draw dungeon level
+		ctx = gameArea.context;
+		ctx.font = "20px Consolas";
+		ctx.fillStyle = "white";
+		ctx.fillText("Dungeon Level: " + dungeonLevel, 15, 30);
+		
+		//draw gold
+		ctx = gameArea.context;
+		ctx.font = "20px Consolas";
+		ctx.fillStyle = "white";
+		ctx.fillText("Gold: " + gold, 15, 50);
+		
+		//draw new point notification
+		ctx.fillStyle = "white";
+		if(displayNewPoint === 1) {
+			ctx.fillText("New Hero Ability Point!", 240, 30);
+		}
+		
+		//draw control information
+		ctx.fillText("(H)ero Abilities", 15, 580);
+		ctx.fillText("(S)hop", 15, 560);
+	}
+	
+	ctx.fillStyle = "black";
+	ctx.fillText("OUT OF DATE VERSION: JAVA LIBERTY APP BUG", 40, 500);
+}
+
+function generateRoom() {
+	numEnemies = 0;
+	enemies = [];
+
+	//vertical or horiz
+	isVertical = Math.floor(Math.random() * 2);
+	
+	mainHall = [];
+	
+	//generate main hall length
+	var len = Math.floor(Math.random() * 5) + 4;
+	
+	//generate main hallway
+	if(isVertical === 0) {
+		for(var i = 0; i < len; i++) {
+			mainHall.push(new floorTile(300 - TILE_SPACE/2 * len + TILE_SPACE * i, 300));
+		}
+	}
+	else {
+		for(var i = 0; i < len; i++) {
+			mainHall.push(new floorTile(300, 300 - TILE_SPACE/2 * len + TILE_SPACE * i));
+		}
+	}
+	
+	//interconnect main hallway
+	for(var i = 0; i < len - 1; i++) {
+		if(isVertical === 1) {
+			mainHall[i]._down = mainHall[i + 1];
+			mainHall[i + 1]._up = mainHall[i];
+		}
+		else {
+			mainHall[i]._right = mainHall[i + 1];
+			mainHall[i + 1]._left = mainHall[i];
+		}
+		var enemyRand = Math.floor(Math.random() * 100);
+		if(enemyRand < 20) {
+			var e = new enemy(mainHall[i].x, mainHall[i].y);
+			enemies.push(e);
+			numEnemies = numEnemies + 1;
+			mainHall[i].containedEnemy = e;
+		}
+	}
+	
+	//generate starting position on main hall
+	//intraconnect main hall to starting position
+	var freeEdge = new Array(len * 2 + 2);
+	for(var i = 0; i < len * 2 + 2; i++) {
+		freeEdge[i] = 1;
+	}
+	var startPos = Math.floor(Math.random() * (len * 2 + 2));
+	if(startPos >= len) {
+		startPos = startPos - len;
+		if(startPos >= len) {
+			//end point not edge
+			startPos = startPos - len;
+			freeEdge[startPos + 2*len] = 0;
+			if(startPos === 0) {
+				//left or bottom end
+				if(isVertical === 1) {
+					//top end
+					
+					start = new startTile(mainHall[0].x, mainHall[0].y - TILE_SPACE);
+					start._down = mainHall[0];
+					mainHall[0]._up = start;
+				}
+				else {
+					//left end
+					
+					start = new startTile(mainHall[0].x - TILE_SPACE, mainHall[0].y);
+					start._right = mainHall[0];
+					mainHall[0]._left = start;
+				}
+			}
+			else {
+				//right or top end
+				
+				if(isVertical === 1) {
+					//bottom end
+					
+					start = new startTile(mainHall[len - 1].x, mainHall[len - 1].y + TILE_SPACE);
+					start._up = mainHall[len - 1];
+					mainHall[len - 1]._down = start;
+				}
+				else {
+					//right end
+					
+					start = new startTile(mainHall[len - 1].x + TILE_SPACE, mainHall[len - 1].y);
+					start._left = mainHall[len - 1];
+					mainHall[len - 1]._right = start;
+				}
+			}
+		}
+		else {
+			//right or top edge
+			if(isVertical === 1) {
+				//right edge
+				
+				start = new startTile(mainHall[startPos].x + TILE_SPACE, mainHall[startPos].y);
+				start._left = mainHall[startPos];
+				mainHall[startPos]._right = start;
+			}
+			else {
+				//top edge
+				
+				start = new startTile(mainHall[startPos].x, mainHall[startPos].y - TILE_SPACE);
+				start._down = mainHall[startPos];
+				mainHall[startPos]._up = start;
+			}
+			
+			freeEdge[startPos + len] = 0;
+			
+			if(startPos === 0) {
+				freeEdge[startPos + 1 + len] = 0;
+			}
+			else if(startPos === len - 1) {
+				freeEdge[startPos - 1 + len] = 0;
+			}
+			else {
+				freeEdge[startPos + 1 + len] = 0;
+				freeEdge[startPos - 1 + len] = 0;
+			}
+		}
+	}
+	else {
+		//left or bottom edge
+		if(isVertical === 1) {
+			//left edge
+			
+			start = new startTile(mainHall[startPos].x - TILE_SPACE, mainHall[startPos].y);
+			start._right = mainHall[startPos];
+			mainHall[startPos]._left = start;
+		}
+		else {
+			//bottom edge
+			
+			start = new startTile(mainHall[startPos].x, mainHall[startPos].y + TILE_SPACE);
+			start._up = mainHall[startPos];
+			mainHall[startPos]._down = start;
+		}
+		
+		freeEdge[startPos] = 0;
+			
+		if(startPos === 0) {
+			freeEdge[startPos + 1] = 0;
+		}
+		else if(startPos === len - 1) {
+			freeEdge[startPos - 1] = 0;
+		}
+		else {
+			freeEdge[startPos + 1] = 0;
+			freeEdge[startPos - 1] = 0;
+		}
+	}
+	
+	//reposition player
+	pl.x = start.x;
+	pl.y = start.y;
+	pl.pos = start;
+	
+	//create side hallways
+	//interconnect side hallways
+	//intraconnect side hallways to main hallway
+	numHalls = 0;
+	noEnd = 1;
+	sideHalls = [];
+	while (numHalls < 3) {
+		for(var i = 0; i < len * 2; i++) {
+			//for each freeEdge excluding ends
+			var rand = Math.floor(Math.random() * 100);
+			if(freeEdge[i] === 1 && rand < 25) {
+				//if edge is free and 25% chance pass
+				
+				//create hallway
+				temp = [];
+				//rand is temp hallway's length
+				rand = Math.floor(Math.random() * 3) + 3;
+				for(var j = 0; j < rand; j++) {
+					//create floor tiles for each hallway
+					var hallPos = i;
+					if( i >= len ) {
+						hallPos = i - len;
+					}
+					if(isVertical === 1) {
+						if(i >= len) {
+							//right edge
+							temp.push(new floorTile(mainHall[hallPos].x + TILE_SPACE * (j + 1), mainHall[hallPos].y));
+							if(j !== 0) {
+								temp[j]._left = temp[j - 1];
+								temp[j - 1]._right = temp[j];
+							}
+							else {
+								temp[j]._left = mainHall[hallPos];
+								mainHall[hallPos]._right = temp[j];
+							}
+						}
+						else {
+							//left edge
+							temp.push(new floorTile(mainHall[hallPos].x - TILE_SPACE * (j + 1), mainHall[hallPos].y));
+							if(j !== 0) {
+								temp[j]._right = temp[j - 1];
+								temp[j - 1]._left = temp[j];
+							}
+							else {
+								temp[j]._right = mainHall[hallPos];
+								mainHall[hallPos]._left = temp[j];
+							}
+						}
+						
+						//handle end creation
+						if (j + 1 === rand && noEnd === 1) {
+							//temp[j].width = 50;
+							temp[j].isEnd = 1;
+							noEnd = 0;
+						}
+						else {
+							var enemyRand = Math.floor(Math.random() * 100);
+							if(enemyRand < 40) {
+								e = new enemy(temp[j].x, temp[j].y);
+								enemies.push(e);
+								numEnemies = numEnemies + 1;
+								temp[j].containedEnemy = e;
+							}
+						}
+					}
+					else {
+						if(i >= len) {
+							//top edge
+							temp.push(new floorTile(mainHall[hallPos].x, mainHall[hallPos].y - TILE_SPACE * (j + 1)));
+							if(j !== 0) {
+								temp[j]._down = temp[j - 1];
+								temp[j - 1]._up = temp[j];
+							}
+							else {
+								temp[j]._down = mainHall[hallPos];
+								mainHall[hallPos]._up = temp[j];
+							}
+						}
+						else {
+							//bottom edge
+							temp.push(new floorTile(mainHall[hallPos].x, mainHall[hallPos].y + TILE_SPACE * (j + 1)));
+							if(j !== 0) {
+								temp[j]._up = temp[j - 1];
+								temp[j - 1]._down = temp[j];
+							}
+							else {
+								temp[j]._up = mainHall[hallPos];
+								mainHall[hallPos]._down = temp[j];
+							}
+						}
+						
+						//handle end creation
+						if (j + 1 === rand && noEnd === 1) {
+							//temp[j].width = 50;
+							temp[j].isEnd = 1;
+							noEnd = 0;
+						}
+						else {
+							var enemyRand = Math.floor(Math.random() * 100);
+							if(enemyRand < 40) {
+								e = new enemy(temp[j].x, temp[j].y);
+								enemies.push(e);
+								numEnemies = numEnemies + 1;
+								temp[j].containedEnemy = e;
+							}
+						}
+					}
+				
+					if(i === 0) {
+						freeEdge[0] = 0;
+						freeEdge[1] = 0;
+					}
+					else if(i === len - 1) {
+						freeEdge[len - 1] = 0;
+						freeEdge[len - 2] = 0;
+					}
+					else if(i === len) {
+						freeEdge[len] = 0;
+						freeEdge[len + 1] = 0;
+					}
+					else if(i === 2*len - 1) {
+						freeEdge[2*len - 1] = 0;
+						freeEdge[2*len - 2] = 0;
+					}
+					else {
+						freeEdge[i] = 0;
+						freeEdge[i + 1] = 0;
+						freeEdge[i - 1] = 0;
+					}				
+				}
+				
+				sideHalls.push(temp);
+				
+				numHalls++;
+			}
+		}
+	}
+	
+	//create end tile
+	//end = new endTile(0, 0);
+}
+
+function combatHandle() {
+	if(pl.hp < 1) {
+		//game over
+		//free to adjust scoring system
+		score = score + 100 * dungeonLevel;
+		score = score + 100 * pl.weaponRank;
+		score = score + 100 * pl.armorRank;
+		score = score + 100 * pl.potionRank;
+		score = score + 100 * pl.speedRank;
+		score = score + 50 * pl.potions;
+		gameOver = 1;
+	}
+	if(target.hp < 1) {
+		combatActive = 0;
+		if(target.alive === 1) {
+			target.alive = 0;
+			gold = gold + Math.floor(100 * pl.bonusGold) + 200 * target.isBounty;
+			score = score + 100;
+		}
+	}
+	if(pl.turnStorage > 0) {
+		playerTurn();
+	}
+	else if(target.turnStorage > 0) {
+		targetTurn();
+	}
+	else {
+		var updated = 0;
+		while(pl.turnStorage === 0 && target.turnStorage === 0) {
+			pl.speedEntropy = Math.floor((pl.speedEntropy + pl.speed) * pl.bonusSpeed);
+			target.speedEntropy = target.speedEntropy + target.speed;
+			while(pl.speedEntropy >= 100) {
+				pl.speedEntropy = pl.speedEntropy - 100;
+				pl.turnStorage = pl.turnStorage + 1;
+			}
+			while(target.speedEntropy >= 100) {
+				target.speedEntropy = target.speedEntropy - 100;
+				target.turnStorage = target.turnStorage + 1;
+			}
+			updated = updated + 1;
+		}
+		if(updated != 0) {
+			combatHandle();
+		}
+	}
+}
+
+function playerTurn() {
+	awaitingInput = 1;
+}
+
+function targetTurn() {
+	target.turnStorage = target.turnStorage - 1;
+	
+	if(target.poison > 0) {
+		target.hp = target.hp - target.poison;
+		target.poisonDamageTaken[target.poisonHitsTaken] = target.poison;
+		target.poisonHitsTaken = target.poisonHitsTaken + 1;
+		target.poison = target.poison - 1;
+	}
+	
+	if(target.hp > 0) {
+		var armorReduction = Math.floor((pl.armor + pl.armorRank) * pl.bonusArmor);
+		var damageDealt = Math.floor((Math.random() * target.damageRange) * (1 + 0.2 * pl.isEnraged)) + target.baseDamage - armorReduction;
+		if(damageDealt < 0) {
+			damageDealt = 0;
+		}
+		pl.hp = pl.hp - damageDealt;
+		pl.damageTaken[pl.hitsTaken] = damageDealt;
+		pl.hitsTaken = pl.hitsTaken + 1;
+	}
+	combatHandle();
+
+}
+
+window.onkeyup = function(e) {
+	//read user inputs continuously
+	//move player through map based on key inputs
+	//ignore additional keys
+	
+	var key = e.keyCode ? e.keyCode : e.which;
+	
+	if(gameOver === 1) {
+		//block all inputs
+	}
+	else if(abilitiesActive === 1) {
+		if(key === 72) {
+			abilitiesActive = 0;
+			abilityError = "";
+		}
+		else if (key === 79) {
+			//offense
+			abilitySelected = 0;
+			columnSelected = "null";
+			abilityError = "";
+		}
+		else if (key === 68) {
+			//defense
+			abilitySelected = 1;
+			columnSelected = "null";
+			abilityError = "";
+		}
+		else if (key === 85) {
+			//utility
+			abilitySelected = 2;
+			columnSelected = "null";
+			abilityError = "";
+		}
+		else if (key === 49 && abilitySelected !== "null") {
+			//column 1
+			columnSelected = 0;
+			abilityError = "";
+		}
+		else if (key === 50 && abilitySelected !== "null") {
+			//column 2
+			columnSelected = 1;
+			abilityError = "";
+		}
+		else if (key === 51 && abilitySelected !== "null") {
+			//column 3
+			columnSelected = 2;
+			abilityError = "";
+		}
+		else if (key === 65) {
+			if(pl.abilityPoints < 1) {
+				//insufficient points
+				abilityError = "Insufficient ability points.";
+			}
+			else if((abilitySelected === 0 && pl.offenseTier === 4) || (abilitySelected === 1 && pl.defenseTier === 4) || (abilitySelected === 2 && pl.utilityTier === 4)) {
+				//max rank in ability
+				abilityError = "Max rank in ability.";
+			}
+			else if (abilitySelected !== "null" && columnSelected !== "null") {
+				if(abilitySelected === 0) {
+					//offense ability unlocked
+					if(pl.offenseTier < 3) {
+						//not ult
+						if(columnSelected === 0) {
+							//wrath
+							pl.bonusDamage = pl.bonusDamage + .2;
+						}
+						else if(columnSelected === 1) {
+							//rampage
+							pl.rampage = pl.rampage + 1;
+						}
+						else {
+							//sunder
+							pl.armorPen = pl.armorPen + 2;
+						}
+					pl.offenseAbility[columnSelected + 3 * pl.offenseTier] = 1;
+					}
+					else {
+						//enrage
+						pl.offenseAbility[9] = 1;
+					}
+					pl.offenseTier = pl.offenseTier + 1;
+				}
+				else if(abilitySelected === 1) {
+					//defense ability unlocked
+					if(pl.defenseTier < 3) {
+						//not ult
+						if(columnSelected === 0) {
+							//barrier
+							pl.bonusArmor = pl.bonusArmor + .2;
+						}
+						else if(columnSelected === 1) {
+							//hamper
+							pl.hamper = pl.hamper + 1;
+						}
+						else {
+							//regeneration
+							pl.regen = pl.regen + 2;
+						}
+					pl.defenseAbility[columnSelected + 3 * pl.defenseTier] = 1;
+					}
+					else {
+						//crush
+						pl.defenseAbility[9] = 1;
+					}
+					pl.defenseTier = pl.defenseTier + 1;
+				}
+				else {
+					//utility ability unlocked
+					if(pl.utilityTier < 3) {
+						//not ult
+						if(columnSelected === 0) {
+							//midas touch
+							pl.bonusGold = pl.bonusGold + .2;
+						}
+						else if(columnSelected === 1) {
+							//viper strike
+							pl.viperStrike = pl.viperStrike + 1;
+						}
+						else {
+							//quickness
+							pl.bonusSpeed = pl.bonusSpeed + .2;
+						}
+					pl.utilityAbility[columnSelected + 3 * pl.utilityTier] = 1;
+					}
+					else {
+						//seek bounty
+						pl.utilityAbility[9] = 1;
+					}
+					pl.utilityTier = pl.utilityTier + 1;
+				}
+				pl.abilityPoints = pl.abilityPoints - 1;
+				abilityError = "";
+			}
+		}
+	}
+	else if(shopActive === 1) {
+		if(key === 83) {
+			shopActive = 0;
+		}
+		if(key === 87) {
+			//upgrade (W)eapon
+			if(gold >= pl.weaponCost) {
+				gold = gold - pl.weaponCost;
+				pl.weaponRank = pl.weaponRank + 1;
+				pl.weaponCost = Math.floor(pl.weaponCost * pl.priceScale);
+			}
+		}
+		if(key === 65) {
+			//upgrade (A)rmor
+			if(gold >= pl.armorCost) {
+				gold = gold - pl.armorCost;
+				pl.armorRank = pl.armorRank + 1;
+				pl.armorCost = Math.floor(pl.armorCost * pl.priceScale);
+			}
+		}
+		if(key === 80) {
+			//buy (P)otions
+			if(gold >= pl.potionCost) {
+				gold = gold - pl.potionCost;
+				pl.potions = pl.potions + 1;
+			}
+		}
+		if(key === 79) {
+			//upgrade p(o)tion
+			if(gold >= pl.potionUpgradeCost) {
+				gold = gold - pl.potionUpgradeCost;
+				pl.potionRank = pl.potionRank + 1;
+				pl.potionUpgradeCost = Math.floor(pl.potionUpgradeCost * pl.priceScale);
+			}
+		}
+		if(key === 69) {
+			//upgrade sp(e)ed
+			if(gold >= pl.speedCost) {
+				gold = gold - pl.speedCost;
+				pl.speed = pl.speed + 5;
+				pl.speedRank = pl.speedRank + 1;
+				pl.speedCost = Math.floor(pl.speedCost * pl.priceScale);
+			}
+		}
+	}
+	else if(combatActive === 1) {
+		if(awaitingInput === 1) {
+			pl.damageTaken = [];
+			pl.hitsTaken = 0;
+			target.hitsTaken = 0;
+			target.poisonHitsTaken = 0;
+			target.poisonDamageTaken = [];
+			abilityError = "";
+			pl.healed = 0;
+			//read input
+			//handle input
+			if(key === 65) {
+				//attack (A)
+				awaitingInput = 0;
+				var armorReduction = target.armor - pl.armorPen;
+				if(pl.armorPen > target.armor) {
+					armorReduction = 0;
+				}
+				
+				var damageDealt = Math.floor((Math.random() * (pl.damageRange + pl.weaponRank) + pl.baseDamage + pl.weaponRank) * (pl.bonusDamage + 0.3 * pl.isEnraged)) - armorReduction;
+				if(damageDealt < 0) {
+					damageDealt = 0;
+				}
+				target.hp = target.hp - damageDealt;
+				target.damageTaken[target.hitsTaken] = damageDealt;
+				target.hitsTaken = target.hitsTaken + 1;
+				pl.turnStorage = pl.turnStorage - 1;
+				
+				pl.hp = pl.hp + pl.regen;
+				if(pl.hp > 100) {
+					pl.hp = 100;
+				}
+				
+				combatHandle();
+			}
+			else if(key === 80) {
+				//potion (P)
+				if(pl.potions > 0) {
+					//pl.turnStorage = pl.turnStorage - 1;
+					awaitingInput = 0;
+					pl.potions = pl.potions - 1;
+					var amtHeal = Math.floor(Math.random() * (25 + 5 * pl.potionRank)) + 25;
+					if(amtHeal > 0) {
+						pl.healed = amtHeal;
+					}
+					pl.hp = pl.hp + amtHeal;
+					pl.hp = pl.hp + pl.regen;
+					if(pl.hp > 100) {
+						pl.hp = 100;
+					}
+					combatHandle();
+				}
+			}
+			else if (key === 82) {
+				//rampage
+				if(pl.rampage > 0) {
+					awaitingInput = 0;
+					var armorReduction = target.armor = pl.armorPen;
+					if(pl.armorPen > target.armor) {
+						armorReduction = 0;
+					}
+					var damageDealt = Math.floor((Math.random() * (pl.damageRange + pl.weaponRank + 5 * pl.rampage) + pl.baseDamage + pl.weaponRank + 5 * pl.rampage) * (pl.bonusDamage + 0.3 * pl.isEnraged)) - armorReduction;
+					if(damageDealt < 0) {
+						damageDealt = 0;
+					}
+					target.hp = target.hp - damageDealt;
+					target.damageTaken[target.hitsTaken] = damageDealt;
+					target.hitsTaken = target.hitsTaken + 1;
+					pl.turnStorage = pl.turnStorage - 1;
+					
+					pl.hp = pl.hp + pl.regen;
+					if(pl.hp > 100) {
+						pl.hp = 100;
+					}
+					
+					combatHandle();
+				}
+				else {
+					abilityError = "Ability is not unlocked.";
+				}
+			}
+			else if(key === 72) {
+				//hamper
+				if(pl.hamper > 0) {
+					awaitingInput = 0;
+					var armorReduction = target.armor - pl.armorPen;
+					if(pl.armorPen > target.armor) {
+						armorReduction = 0;
+					}
+				
+					var damageDealt = Math.floor((Math.random() * (pl.damageRange + pl.weaponRank) + pl.baseDamage + pl.weaponRank) * (pl.bonusDamage + 0.3 * pl.isEnraged)) - armorReduction;
+					if(damageDealt < 0) {
+						damageDealt = 0;
+					}
+					target.hp = target.hp - damageDealt;
+					target.damageTaken[target.hitsTaken] = damageDealt;
+					target.hitsTaken = target.hitsTaken + 1;
+					
+					target.speedEntropy = target.speedEntropy - 20 * pl.hamper;
+					if(target.speedEntropy < 0) {
+						target.speedEntropy = 0;
+					}
+					
+					pl.turnStorage = pl.turnStorage - 1;
+				
+					pl.hp = pl.hp + pl.regen;
+					if(pl.hp > 100) {
+						pl.hp = 100;
+					}
+					
+					combatHandle();
+				}
+				else {
+					abilityError = "Ability is not unlocked.";
+				}
+			}
+			else if(key === 86) {
+				//viper strike
+				if(pl.viperStrike > 0) {
+					awaitingInput = 0;
+					var armorReduction = target.armor - pl.armorPen;
+					if(pl.armorPen > target.armor) {
+						armorReduction = 0;
+					}
+					
+					var damageDealt = Math.floor((Math.random() * (pl.damageRange + pl.weaponRank - 2 * pl.viperStrike) + pl.baseDamage + pl.weaponRank - 2 * pl.viperStrike) * (pl.bonusDamage + 0.3 * pl.isEnraged)) - armorReduction;
+					if(damageDealt < 0) {
+						damageDealt = 0;
+					}
+					else if(damageDealt > 0) {
+						target.poison = target.poison + 2 * pl.viperStrike;
+					}
+					target.hp = target.hp - damageDealt;
+					target.damageTaken[target.hitsTaken] = damageDealt;
+					target.hitsTaken = target.hitsTaken + 1;
+					pl.turnStorage = pl.turnStorage - 1;
+					
+					pl.hp = pl.hp + pl.regen;
+					if(pl.hp > 100) {
+						pl.hp = 100;
+					}
+					
+					combatHandle();
+				}
+				else {
+					abilityError = "Ability is not unlocked.";
+				}
+			}
+			else if(key === 69) {
+				//enrage
+				if(pl.offenseAbility[9] === 1 && pl.canEnrage === 1) {
+					pl.canEnrage = 0;
+					awaitingInput = 0;
+					pl.isEnraged = 1;
+					pl.turnStorage = pl.turnStorage + 1;
+					combatHandle();
+				}
+				else {
+					if(pl.canEnrage === 0) {
+						abilityError = "Ability is not ready yet.";
+					}
+					else {
+						abilityError = "Ability is not unlocked.";
+					}
+				}
+			}
+			else if(key === 67) {
+				//crush
+				if(pl.defenseAbility[9] === 1 && pl.canCrush === 1) {
+					pl.canCrush = 0;
+					awaitingInput = 0;
+					var armorReduction = target.armor - pl.armorPen;
+					if(pl.armorPen > target.armor) {
+						armorReduction = 0;
+					}
+					
+					var damageDealt = Math.floor((Math.random() * (pl.damageRange + pl.weaponRank) + pl.baseDamage + pl.weaponRank) * (pl.bonusDamage + 0.3 * pl.isEnraged)) - armorReduction;
+					if(damageDealt < 0) {
+						damageDealt = 0;
+					}
+					target.hp = target.hp - damageDealt;
+					target.damageTaken[target.hitsTaken] = damageDealt;
+					target.hitsTaken = target.hitsTaken + 1;
+					pl.turnStorage = pl.turnStorage - 1;
+					
+					pl.hp = pl.hp + pl.regen;
+					if(pl.hp > 100) {
+						pl.hp = 100;
+					}
+					
+					target.speedEntropy = 0;
+					target.turnStorage = 0;
+					
+					combatHandle();
+				}
+				else {
+					if(pl.canCrush === 0) {
+						abilityError = "Ability is not ready yet.";
+					}
+					else {
+						abilityError = "Ability is not unlocked.";
+					}
+				}
+			}
+			else if(key === 83) {
+				//seek bounty
+				if(pl.utilityAbility[9] === 1 && pl.canSeek === 1) {
+					pl.canSeek = 0;
+					awaitingInput = 0;
+					
+					target.isBounty = 1;
+					
+					combatHandle();
+				}
+				else {
+					if(pl.canSeek === 0) {
+						abilityError = "Ability is not ready yet.";
+					}
+					else {
+						abilityError = "Ability is not unlocked.";
+					}
+				}
+			}
+		}
+	}
+	else {
+		displayNewPoint = 0;
+		if(key === 38) {
+			//move player up if exists
+			//pl.y = pl.y - 10;
+			if(pl.pos._up !== "null") {
+				pl.pos = pl.pos._up;
+				pl.x = pl.pos.x;
+				pl.y = pl.pos.y;
+			}
+			//check if on end tile
+
+		}
+		else if (key === 40) {
+			//move player down if exists
+			//pl.y = pl.y + 10;
+			if(pl.pos._down !== "null") {
+				pl.pos = pl.pos._down;
+				pl.x = pl.pos.x;
+				pl.y = pl.pos.y;
+			}
+
+		}
+		else if (key === 37) {
+			//move player left if exists
+			//pl.x = pl.x - 10;
+			if(pl.pos._left !== "null") {
+				pl.pos = pl.pos._left;
+				pl.x = pl.pos.x;
+				pl.y = pl.pos.y;
+			}
+
+		}
+		else if (key === 39) {
+			//move player right if exists
+			//pl.x = pl.x + 10;
+			if(pl.pos._right !== "null") {
+				pl.pos = pl.pos._right;
+				pl.x = pl.pos.x;
+				pl.y = pl.pos.y;
+			}
+
+		}
+		else if(key === 83) {
+			//open shop window
+			shopActive = 1;
+		}
+		else if(key === 72) {
+			//open hero abilities
+			abilitySelected = "null";
+			columnSelected = "null";
+			abilitiesActive = 1;
+		}
+		
+		if(pl.pos.isEnd === 1) {
+			generateRoom();
+			dungeonLevel = dungeonLevel + 1;
+			if(dungeonLevel % 2 === 1) {
+				displayNewPoint = 1;
+				pl.abilityPoints = pl.abilityPoints + 1;
+			}
+			//gold = gold + 100;
+		}
+		if(pl.pos.containedEnemy !== "null") {
+			target = pl.pos.containedEnemy;
+			if(target.hp > 0) {
+				if(pl.turnStorage < 1) {
+					pl.turnStorage = 1;
+				}
+				combatActive = 1;
+				pl.canEnrage = 1;
+				pl.canCrush = 1;
+				pl.canSeek = 1;
+				combatHandle();
+			}
+		}
+	}
+};
+
+/*// index.js
+
+// request message on server
+//Calls SimpleServlet to get the "Hello World" message
+xhrGet("SimpleServlet", function(responseText){
+	// add to document
+	var mytitle = document.getElementById('message');
+	mytitle.innerHTML = responseText;
+
+}, function(err){
+	console.log(err);
+});
+
+//utilities
+function createXHR(){
+	if(typeof XMLHttpRequest != 'undefined'){
+		return new XMLHttpRequest();
+	}else{
+		try{
+			return new ActiveXObject('Msxml2.XMLHTTP');
+		}catch(e){
+			try{
+				return new ActiveXObject('Microsoft.XMLHTTP');
+			}catch(e){}
+		}
+	}
+	return null;
+}
+function xhrGet(url, callback, errback){
+	var xhr = new createXHR();
+	xhr.open("GET", url, true);
+	xhr.onreadystatechange = function(){
+		if(xhr.readyState == 4){
+			if(xhr.status == 200){
+				callback(xhr.responseText);
+			}else{
+				errback('service not available');
+			}
+		}
+	};
+	xhr.timeout = 3000;
+	xhr.ontimeout = errback;
+	xhr.send();
+}
+function parseJson(str){
+	return window.JSON ? JSON.parse(str) : eval('(' + str + ')');
+}
+function prettyJson(str){
+	// If browser does not have JSON utilities, just print the raw string value.
+	return window.JSON ? JSON.stringify(JSON.parse(str), null, '  ') : str;
+}
+
+*/

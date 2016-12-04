@@ -12,15 +12,9 @@
 	
 	$sql = "SELECT * FROM highscores ORDER BY score DESC";
 	$result = $conn->query($sql);
-	//$result = $conn->prepare($sql);
-	//$result->execute();
-	//$result->store_result();
 	$rank = 1;
-	
-	//echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";
-	//echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
+
 	if($result->num_rows > 0) {
-		echo "before while";
 		while ($row = $result->fetch_assoc()) {
 			echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
 			$rank++;
@@ -33,7 +27,6 @@
 		else {
 			echo "less than zero";
 		}
-		//echo "zero or less";
 	}
 	$conn->close();
 ?>

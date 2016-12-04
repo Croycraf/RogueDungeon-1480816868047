@@ -16,10 +16,13 @@
 	
 	//echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
 
-	
-	while ($row = $result->fetch_row()) {
+	if($result->num_rows > 0) {
+		/*
+	while ($row = $result->fetch_assoc()) {
 		echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
 		$rank++;
+	}
+	*/
 	}
 	
 

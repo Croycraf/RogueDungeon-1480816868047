@@ -111,6 +111,18 @@ function loadImages() {
 	skeleton[1].src = "images/enemies/skeleton face left.png";
 	skeleton[2] = new Image();
 	skeleton[2].src = "images/enemies/skeleton corpse.png";
+	skeleton[3] = new Image();
+	skeleton[3].src = "images/enemies/skeleton attack stance 1.png";
+	skeleton[4] = new Image();
+	skeleton[4].src = "images/enemies/skeleton attack stance 2.png";
+	skeleton[5] = new Image();
+	skeleton[5].src = "images/enemies/skeleton attack stance 3.png";
+	skeleton[6] = new Image();
+	skeleton[6].src = "images/enemies/skeleton attack stance 4.png";
+	skeleton[7] = new Image();
+	skeleton[7].src = "images/enemies/skeleton attack stance 5.png";
+	skeleton[8] = new Image();
+	skeleton[8].src = "images/enemies/skeleton attack stance 6.png";
 }
 
 var gameArea = {
@@ -314,6 +326,9 @@ function enemy(x, y) {
 	this.poisonDamageTaken = [];
 	this.poisonHitsTaken = 0;
 	this.isBounty = 0;
+	this.renderAttackImage = 0;
+	this.renderAttackImageStance = 0;
+	this.stanceUp = 1;
 	
 	this.alive = 1;
 }
@@ -976,8 +991,24 @@ function updateGameArea() {
 		ctx.fillRect(10, 10, 580, 580);
 		
 		//draw enemy
-		if (target.type === "Skeleton") {
-			ctx.drawImage(skeleton[1], 380, 75, 130, 180);
+		if (target.type === "Skeleton") {	
+			if (target.renderAttackImage === 1) {
+				if (target.stanceUp) {
+					target.renderAttackImageStance++;
+					if (target.renderAttackImageStance === 6) {
+						target.stanceUp = 0;
+					}
+				} else {
+					target.renderAttackImageStance--;
+					if (target.renderAttackImageStance === 1) {
+						target.stanceUp = 1;
+						target.renderAttackImage = 0;
+					}
+				}
+				ctx.drawImage(skeleton[2 + target.renderAttackImageStance], 380, 75, 130, 180);
+			} else {
+				ctx.drawImage(skeleton[1], 380, 75, 130, 180);
+			}
 		}
 		
 		//draw player
@@ -1534,6 +1565,9 @@ function targetTurn() {
 	}
 	
 	if(target.hp > 0) {
+		target.renderAttackImage = 1;
+		target.renderAttackImageStance = 0;
+		target.stanceUp = 1;
 		var armorReduction = Math.floor((pl.armor + pl.armorRank) * pl.bonusArmor);
 		var damageDealt = Math.floor((Math.random() * target.damageRange) * (1 + 0.2 * pl.isEnraged)) + target.baseDamage - armorReduction;
 		if(damageDealt < 0) {

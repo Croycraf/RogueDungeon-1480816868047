@@ -9,7 +9,7 @@
 	//echo "Connected successfully. ";
 	
 	$q = $_REQUEST["q"];
-	
+	/*
 	$token = strtok($q, "_");
 	$arr = array();
 	while ($token !== false) {
@@ -19,8 +19,8 @@
 	for $x = 0; $x < count($arr); $x++) {
 		echo $arr[$x] . "   ";
 	}
-	
-	if ($arr[0] == "score") {
+	*/
+	if ($q == "score") {
 		
 		$sql = "SELECT * FROM highscores ORDER BY score DESC";
 		$result = $conn->query($sql);
@@ -42,7 +42,7 @@
 		}
 		$conn->close();
 		
-	} elseif $arr[0] == "insert") {
+	} elseif $q == "insert") {
 
 	}
 	

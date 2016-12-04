@@ -2127,7 +2127,7 @@ function getRequest(url, success, errorFunc) {
 			}
 			else {
 				serverConnection = 0;
-				error(req.status);
+				errorFunc(req.status);
 			}
 		}
 	};

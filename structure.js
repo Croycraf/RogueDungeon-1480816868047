@@ -6,6 +6,7 @@ function start() {
 	serverConnection = 0;
 	sentHighScores = 0;
 	highScoresText = "generic text test";
+	scoreOffset = 0;
 	
 	//general globals
 	dungeonLevel = 1;
@@ -461,7 +462,6 @@ function updateGameArea() {
 		ctx.fillRect(0,0, 600, 600);
 		ctx.fillStyle = "white";
 		ctx.font = "20px Consolas";
-		ctx.fillText("High Scores", 250, 20);
 		if(serverConnection === 1) {
 			//ctx.fillText("Success", 20, 40);
 			drawOutput(highScoresText);
@@ -470,6 +470,11 @@ function updateGameArea() {
 			//ctx.fillText("Failed", 20, 40);
 			drawError();
 		}
+		ctx.fillStyle = "black";
+		ctx.fillRect(0,0,600,30);
+		ctx.fillStyle = "white";
+		ctx.font = "20px Consolas";
+		ctx.fillText("High Scores", 250, 20);
 	}
 	else if(gameOver === 1) {
 		//draw gameover screen
@@ -1675,6 +1680,16 @@ window.onkeyup = function(e) {
 		if(key === 75) {
 			scoreboardActive = 0;
 		}
+		else if(key === 38) {
+			//up
+			scoreOffset = scoreOffset + 1;
+		}
+		else if(key === 40) {
+			//down
+			if(scoreOffset > 0) {
+				scoreOffset = scoreOffset - 1;
+			}
+		}
 	}
 	else if(gameOver === 1) {
 		//block all inputs
@@ -1703,6 +1718,7 @@ window.onkeyup = function(e) {
 		}
 		else {
 			if(key === 75) {
+				getOutput();
 				scoreboardActive = 1;
 			}
 		}
@@ -2243,10 +2259,10 @@ function drawOutput(responseText) {
 	var entries = responseText.split("_");
 	for(var i = 0; i < entries.length - 1; i++) {
 		var row = entries[i].split(" ");
-		ctx.fillText(row[0], 30, 60 + 30 * i);
-		ctx.fillText(row[1], 90 , 60 + 30 * i);
-		ctx.fillText(row[2], 300, 60 + 30 * i);
-		ctx.fillText(row[3], 500, 60 + 30 * i);
+		ctx.fillText(row[0], 30, 60 + 30 * i + 500 * scoreOffset);
+		ctx.fillText(row[1], 90 , 60 + 30 * i + 500 * scoreOffset);
+		ctx.fillText(row[2], 300, 60 + 30 * i + 500 * scoreOffset);
+		ctx.fillText(row[3], 500, 60 + 30 * i + 500 * scoreOffset);
 	}
 }
 	

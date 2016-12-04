@@ -16,7 +16,7 @@
 
 	if($result->num_rows > 0) {
 		while ($row = $result->fetch_assoc()) {
-			echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
+			echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "PHP_EOL";
 			$rank++;
 		}
 	}

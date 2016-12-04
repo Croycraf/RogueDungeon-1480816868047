@@ -269,7 +269,7 @@ function player(x, y) {
 	position = null;
 	
 	//combat variables and related shop variables
-	this.hp = 1;
+	this.hp = 100;
 	this.speedEntropy = Math.floor(Math.random() * 100);
 	this.turnStorage = 0;
 	

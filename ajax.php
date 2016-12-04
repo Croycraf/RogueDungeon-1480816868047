@@ -2,7 +2,7 @@
 	$servername = "us-cdbr-iron-east-04.cleardb.net";
 	$username = "b8e8d5c50f2a55";
 	$password = "ea36a1fa";
-	$conn = new mysqli($servername, $username, $password);
+	$conn = new mysqli($servername, $username, $password, "ad_78271414726dba7");
 		if ($conn->connect_errno > 0) {
 	    die('Unable to connect to database' . $conn->connect_error);
 	}

@@ -7,11 +7,12 @@
 	    die('Unable to connect to database' . $conn->connect_error);
 	}
 	echo "Connected successfully";
-	/*
+	
 	$q = $_REQUEST["q"];
 	
 	$result = mysql_query("SELECT userName, score, floor FROM highscores ORDER BY score DESC");
 	$rank = 1;
+	/*
 	if (mysql_num_rows($result)) {
 		while ($row = mysql_fetch_assoc($result)) {
 			echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";

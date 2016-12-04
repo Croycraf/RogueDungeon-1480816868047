@@ -2247,7 +2247,7 @@ function getRequest(url, success, errorFunc) {
 	//	req.open("GET", url + "?q=send&name=" + pl.name + "&score=" + score + "&floor=" + dungeonLevel);
 	//}
 	//else {
-		req.open("GET", url + "?q=" + "score", true);
+		req.open("GET", url + "?q=" + "score" + "&name=" + "billy", true);
 	//}
 	req.send();
 	return req;

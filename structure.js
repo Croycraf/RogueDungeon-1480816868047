@@ -123,6 +123,15 @@ function loadImages() {
 	skeleton[7].src = "images/enemies/skeleton attack stance 5.png";
 	skeleton[8] = new Image();
 	skeleton[8].src = "images/enemies/skeleton attack stance 6.png";
+	
+	//combat item images
+	combatItems = new Array();
+	combatItems.onload = function () {
+		imgLoaded = true;
+	}
+	combatItems[0] = new Image();
+	combatItems[0].src = "images/combat items/potion.png";	
+
 }
 
 var gameArea = {
@@ -1015,7 +1024,7 @@ function updateGameArea() {
 		ctx.drawImage(character[6], 100, 435, 105, 115);
 		
 		//draw border bars
-		ctx.fillStyle = "white";
+		ctx.fillStyle = "#C0C0C0";
 		ctx.fillRect(10, 10, 580, 30);
 		ctx.fillRect(10, 560, 580, 30);
 		
@@ -1042,56 +1051,59 @@ function updateGameArea() {
 		ctx.fillText(target.type, 374 + xPixelOffset, 286);
 		
 		//draw hitpoints
-		ctx.font = "20px Consolas";
+		ctx.font = "18px Consolas";
 		ctx.fillStyle = "white";
 		ctx.fillText("HP: " + target.hp, 330, 31);
 		ctx.fillText("HP: " + pl.hp, 30, 581);
 		
 		//draw ability window
+		ctx.fillStyle = "#C0C0C0";
+		ctx.fillRect(285, 395, 305, 195);
 		ctx.fillStyle = "black";
-		ctx.fillRect(290, 390, 300, 200);
-		ctx.fillStyle = "white";
-		ctx.fillRect(300, 400, 290, 190);
+		ctx.fillRect(290, 400, 295, 185);
 		
 		//fill ability window
-		ctx.fillStyle = "black";
-		ctx.font = "20px Consolas";
-		ctx.fillText("(A)ttack", 300, 420);
-		ctx.fillText("(P)otion (" + pl.potions + ")", 420, 420);
+		ctx.fillStyle = "white";
+		ctx.font = "18px Consolas";
+		ctx.fillText("(A)ttack", 310, 430);
+		ctx.fillText("(P)otion  " + pl.potions + "", 430, 430);
 		if(pl.rampage === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(R)ampage", 300, 460);
-		ctx.fillStyle = "black";
+		ctx.fillText("(R)ampage", 310, 470);
+		ctx.fillStyle = "white";
 		if(pl.hamper === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(H)amper", 300, 500);
-		ctx.fillStyle = "black";
+		ctx.fillText("(H)amper", 310, 510);
+		ctx.fillStyle = "white";
 		if(pl.viperStrike === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(V)iper", 300, 540);
-		ctx.fillText(" Strike", 300, 560);
-		ctx.fillStyle = "black";
+		ctx.fillText("(V)iper", 310, 550);
+		ctx.fillText(" Strike", 310, 570);
+		ctx.fillStyle = "white";
 		if(pl.offenseAbility[9] === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(E)nrage", 420, 460);
-		ctx.fillStyle = "black";
+		ctx.fillText("(E)nrage", 430, 470);
+		ctx.fillStyle = "white";
 		if(pl.defenseAbility[9] === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(C)rush", 420, 500);
-		ctx.fillStyle = "black";
+		ctx.fillText("(C)rush", 430, 510);
+		ctx.fillStyle = "white";
 		if(pl.utilityAbility[9] === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(S)eek Bounty", 420, 540);
+		ctx.fillText("(S)eek Bounty", 430, 550);
 		
 		//ability error
 		ctx.fillStyle = "red";
 		ctx.fillText(abilityError, 300, 380);
+		
+		//draw ability window images
+		ctx.drawImage(combatItems[0], 533, 414, 30, 19);
 		
 		//player damage taken
 		if(pl.hitsTaken > 0) {

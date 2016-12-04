@@ -10,25 +10,40 @@
 	
 	$q = $_REQUEST["q"];
 	
-	echo $q . "_";
-	
-	$sql = "SELECT * FROM highscores ORDER BY score DESC";
-	$result = $conn->query($sql);
-	$rank = 1;
-
-	if($result->num_rows > 0) {
-		while ($row = $result->fetch_assoc()) {
-			echo $rank . " " . $row["userName"] . " " . $row["score"] . " " . $row["floor"]. "_";
-			$rank++;
-		}
+	$token = strtok($q, "_");
+	$arr = array();
+	while ($token !== false) {
+		$items[] = $token;
+		$token = strtok("_");
 	}
-	else {
-		if($result->num_rows == 0) {
-			echo "zero";
+	for $x = 0; $x < count($arr); $x++) {
+		echo $arr[$x] . "   ";
+	}
+	
+	if ($arr[0] == "score") {
+		
+		$sql = "SELECT * FROM highscores ORDER BY score DESC";
+		$result = $conn->query($sql);
+		$rank = 1;
+
+		if($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				echo $rank . " " . $row["userName"] . " " . $row["score"] . " " . $row["floor"]. "_";
+				$rank++;
+			}
 		}
 		else {
-			echo "less than zero";
+			if($result->num_rows == 0) {
+				echo "zero";
+			}
+			else {
+				echo "less than zero";
+			}
 		}
+		$conn->close();
+		
+	} elseif $arr[0] == "insert") {
+
 	}
-	$conn->close();
+	
 ?>

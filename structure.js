@@ -1682,11 +1682,13 @@ window.onkeyup = function(e) {
 		if(key === 75) {
 			scoreboardActive = 0;
 		}
-		else if(key === 38) {
-			//up
-			scoreOffset = scoreOffset + 1;
-		}
 		else if(key === 40) {
+			//up
+			if(scoreOffset < 2) {
+				scoreOffset = scoreOffset + 1;
+			}
+		}
+		else if(key === 38) {
 			//down
 			if(scoreOffset > 0) {
 				scoreOffset = scoreOffset - 1;

@@ -4,10 +4,10 @@
 	$password = "ea36a1fa";
 	$conn = new mysqli($servername, $username, $password);
 		if ($conn->connect_errno > 0) {
-	    die('Unable to connect to database [' . $db->connect_error . ']');
+	    die('Unable to connect to database' . $conn->connect_error);
 	}
 	echo "Connected successfully";
-	
+	/*
 	$q = $_REQUEST["q"];
 	
 	$result = mysql_query("SELECT userName, score, floor FROM highscores ORDER BY score DESC");
@@ -18,6 +18,7 @@
 			$rank++;
 		}
 	}
+	*/
 	$conn->close();
 
 /*

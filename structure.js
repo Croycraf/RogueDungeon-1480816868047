@@ -1690,7 +1690,8 @@ window.onkeyup = function(e) {
 				scoreboardActive = 1;
 				
 			}
-			else if(key === 17 || key === 18 || key === 16 || key === 9 || key === 220 || key === 187 || key === 189 || key === 32 || key === 20 || key === 27 || key === 112 || key === 113 || key === 114 || key === 115 || key === 116 || key === 117 || key === 118 || key === 119 || key === 120 || key === 121 || key === 122 || key === 123 || key === 45 || key === 46) {
+			else if(key === 17 || key === 18 || key === 16 || key === 9 || key === 220 || key === 187 || key === 189 || key === 32 || key === 20 || key === 27 || key === 112 || key === 113 || key === 114 || key === 115 || key === 116 || key === 117 || key === 118 || key === 119 || key === 120 || key === 121 || key === 122 || key === 123 || key === 45 || 
+				key === 46 || key === 188 || key === 190 || key === 191 || key === 186 || key === 222 || key === 219 || key === 221 || key === 38 || key === 40 || key === 37 || key === 39 || key === 45 || key === 19) {
 				//block inputs from adding chars
 				//stops shift, ctrl, alt, tab, function keys, esc, and special chars
 			}

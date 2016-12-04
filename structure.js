@@ -177,6 +177,14 @@ function loadImages() {
 	heroImages[3].src = "images/hero images/broken shield.png";
 	heroImages[4] = new Image();
 	heroImages[4].src = "images/hero images/fist.png";
+	heroImages[5] = new Image();
+	heroImages[5].src = "images/hero images/bicep.png";
+	heroImages[6] = new Image();
+	heroImages[6].src = "images/hero images/enrage motion 1.png";
+	heroImages[7] = new Image();
+	heroImages[7].src = "images/hero images/enrage motion 2.png";
+	heroImages[8] = new Image();
+	heroImages[8].src = "images/hero images/enrage motion 3.png";
 }
 
 var gameArea = {
@@ -308,6 +316,7 @@ function player(x, y) {
 	this.attacking = 0;
 	this.attackMotion = 0;
 	this.rampageAttack = 0;
+	this.enrageAnimation = 0;
 	
 	this.armorRank = 0;
 	this.armor = 3;
@@ -824,7 +833,8 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
-
+		//draw enrage
+		ctx.drawImage(heroImages[5], xPos + 47, yPos + 10, 50, 53);
 		
 		//draw defensive abilities
 		xPos = 225;
@@ -1184,6 +1194,23 @@ function updateGameArea() {
 				pl.rampageAttack = 0;
 				ctx.drawImage(character[6], 100, 435, 105, 115);
 			}
+		} else if (pl.enrageAnimation === 1) {
+			var combatOffset = 5;
+			pl.attackMotion++;
+			var frameLength = 8;
+			if (pl.attackMotion < frameLength) {
+				ctx.drawImage(character[10], 100, 435, 105, 115);
+				ctx.drawImage(heroImages[combatOffset + 1], 150, 465, 100, 80);
+			} else if (pl.attackMotion < frameLength * 2) {
+				ctx.drawImage(character[10], 100, 435, 105, 115);
+				ctx.drawImage(heroImages[combatOffset + 2], 150, 465, 100, 80);
+			} else if (pl.attackMotion < frameLength * 3) {
+				ctx.drawImage(character[10], 100, 435, 105, 115);
+				ctx.drawImage(heroImages[combatOffset + 3], 150, 465, 100, 80);
+			} else {
+				pl.enrageAnimation = 0;
+				ctx.drawImage(character[6], 100, 435, 105, 115);
+			}
 		} else {
 			ctx.drawImage(character[6], 100, 435, 105, 115);
 		}
@@ -1255,6 +1282,7 @@ function updateGameArea() {
 			ctx.fillStyle = "grey";
 		}
 		ctx.fillText("(E)nrage", 430, 470);
+		ctx.drawImage(heroImages[5], 513, 452, 23, 23);
 		ctx.fillStyle = "white";
 		if(pl.defenseAbility[9] === 0) {
 			ctx.fillStyle = "grey";
@@ -2136,6 +2164,8 @@ window.onkeyup = function(e) {
 				if(pl.offenseAbility[9] === 1 && pl.canEnrage === 1) {
 					pl.canEnrage = 0;
 					awaitingInput = 0;
+					pl.enrageAnimation = 1;
+					pl.attackMotion = 0;
 					pl.isEnraged = 1;
 					pl.turnStorage = pl.turnStorage + 1;
 					combatHandle();
@@ -2312,6 +2342,7 @@ window.onkeyup = function(e) {
 				pl.drinkingPotion = 0;
 				pl.attacking = 0;
 				pl.rampageAttack = 0;
+				pl.enrageAnimation = 0;
 				combatHandle();
 			}
 		}

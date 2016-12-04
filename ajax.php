@@ -14,14 +14,14 @@
 	$rank = 1;
 	//echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";
 	
-	echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
+	//echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
 
-	/*
-	while ($row = mysql_fetch_assoc($result)) {
-		echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";
+	
+	while ($row = $result->fetch_row()) {
+		echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
 		$rank++;
 	}
-	*/
+	
 
 	$conn->close();
 

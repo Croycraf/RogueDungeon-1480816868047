@@ -9,6 +9,10 @@
 	//echo "Connected successfully. ";
 	
 	$q = $_REQUEST["q"];
+	$name = $_REQUEST["name"];
+	$score = $_REQUEST["score"];
+	$floor = $_REQUEST["floor"];
+
 	
 	/* $name = $_REQUEST["name"];
 	echo $name; */
@@ -33,12 +37,7 @@
 		}
 	}
 	else {
-		
-		$score = $_REQUEST["score"];
-		$floor = $_REQUEST["floor"];
-		$name = $_REQUEST["name"];
-		echo "Your Input: " . $name . " " . $score . " " . $floor
-		
+		echo "Your Input: " . $name . " " . $score . " " . $floor;
 	}
 	$conn->close();
 ?>

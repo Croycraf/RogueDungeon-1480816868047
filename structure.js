@@ -59,6 +59,8 @@ function loadImages() {
 	basicImage[3].src = "images/gold.png";
 	basicImage[4] = new Image();
 	basicImage[4].src = "images/shopping cart.png";
+	basicImage[5] = new Image();
+	basicImage[5].src = "images/shop border image.png";
 	
 	//staircase images
 	staircase = new Array();
@@ -1009,6 +1011,7 @@ function updateGameArea() {
 		ctx = gameArea.context;
 		ctx.fillStyle = "grey";
 		ctx.fillRect(10, 10, 580, 580);
+		ctx.drawImage(basicImage[5], 10, 80, 580, 510);
 		
 		//draw gold
 		ctx.font = "20px Consolas";
@@ -1016,44 +1019,44 @@ function updateGameArea() {
 		ctx.fillText("Gold:   " + gold, 15, 50);
 		ctx.drawImage(basicImage[3], 74, 34, 30, 18);
 		
-		//draw weapon upgrade
-		ctx.fillStyle = "black";
-		ctx.font = "20px Consolas";
-		ctx.fillText("(W)eapon", 20, 400);
-		ctx.fillText("Upgrade", 20, 420);
-		ctx.fillText("Cost: " + pl.weaponCost, 20, 440);
-		ctx.fillText("Current Rank: " + pl.weaponRank, 20, 460);
-		
-		//draw speed upgrade
-		ctx.fillStyle = "black";
-		ctx.font = "20px Consolas";
-		ctx.fillText("Sp(e)ed", 20, 200);
-		ctx.fillText("Upgrade", 20, 220);
-		ctx.fillText("Cost: " + pl.speedCost, 20, 240);
-		ctx.fillText("Current Rank: " + pl.speedRank, 20, 260);
-		
-		//draw armor upgrade
-		ctx.fillStyle = "black";
-		ctx.font = "20px Consolas";
-		ctx.fillText("(A)rmor", 210, 400);
-		ctx.fillText("Upgrade", 210, 420);
-		ctx.fillText("Cost: " + pl.armorCost, 210, 440);
-		ctx.fillText("Current Rank: " + pl.armorRank, 210, 460);
-		
 		//draw potions
-		ctx.fillStyle = "black";
-		ctx.font = "20px Consolas";
-		ctx.fillText("Buy (P)otions", 400, 200);
-		ctx.fillText("Cost: " + pl.potionCost, 400, 220);
-		ctx.fillText("Current Pots: " + pl.potions, 400, 240);
+		ctx.fillStyle = "white";
+		ctx.font = "17px Consolas";
+		ctx.fillText("Buy (P)otions", 200, 180);
+		ctx.fillText("Cost: " + pl.potionCost, 200, 200);
+		ctx.fillText("Current Pots: " + pl.potions, 345, 190);
 		
 		//draw potion upgrade
-		ctx.fillStyle = "black";
-		ctx.font = "20px Consolas";
-		ctx.fillText("P(o)tion", 400, 400);
-		ctx.fillText("Upgrade", 400, 420);
-		ctx.fillText("Cost: " + pl.potionUpgradeCost, 400, 440);
-		ctx.fillText("Current Rank: " + pl.potionRank, 400, 460);
+		ctx.fillStyle = "white";
+		ctx.font = "17px Consolas";
+		ctx.fillText("P(o)tion", 200, 241);
+		ctx.fillText("Upgrade", 200, 261);
+		ctx.fillText("Cost: " + pl.potionUpgradeCost, 200, 281);
+		ctx.fillText("Current Rank: " + pl.potionRank, 345, 261);
+
+		//draw speed upgrade
+		ctx.fillStyle = "white";
+		ctx.font = "17px Consolas";
+		ctx.fillText("Sp(e)ed", 200, 310);
+		ctx.fillText("Upgrade", 200, 330);
+		ctx.fillText("Cost: " + pl.speedCost, 200, 350);
+		ctx.fillText("Current Rank: " + pl.speedRank, 345, 330);
+		
+		//draw weapon upgrade
+		ctx.fillStyle = "white";
+		ctx.font = "17px Consolas";
+		ctx.fillText("(W)eapon", 200, 380);
+		ctx.fillText("Upgrade", 200, 400);
+		ctx.fillText("Cost: " + pl.weaponCost, 200, 420);
+		ctx.fillText("Current Rank: " + pl.weaponRank, 345, 400);
+		
+		//draw armor upgrade
+		ctx.fillStyle = "white";
+		ctx.font = "17px Consolas";
+		ctx.fillText("(A)rmor", 200, 450);
+		ctx.fillText("Upgrade", 200, 470);
+		ctx.fillText("Cost: " + pl.armorCost, 200, 490);
+		ctx.fillText("Current Rank: " + pl.armorRank, 345, 470);
 	}
 	else if(combatActive === 1) {
 		//draw combat screen

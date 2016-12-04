@@ -130,6 +130,8 @@ function loadImages() {
 	skeleton[7].src = "images/enemies/skeleton attack stance 5.png";
 	skeleton[8] = new Image();
 	skeleton[8].src = "images/enemies/skeleton attack stance 6.png";
+	skeleton[9] = new Image();
+	skeleton[9].src = "images/enemies/skeleton corpse 2.png";
 	
 	//combat item images
 	combatItems = new Array();
@@ -320,15 +322,19 @@ function enemy(x, y) {
 	this.update = function() {
 		ctx = gameArea.context;
 		if (this.type === "Skeleton") {
+			// pick a random direction
+			if (this.alreadyRandomized === 0) {
+				this.rand = Math.floor(Math.random() * 2); 
+				this.alreadyRandomized = 1;
+			}
 			if (this.alive === 1) {
-				// pick a random direction
-				if (this.alreadyRandomized === 0) {
-					this.rand = Math.floor(Math.random() * 2); 
-					this.alreadyRandomized = 1;
-				}
 				ctx.drawImage(skeleton[this.rand], this.x + TILE_SIZE * 1 / 7, this.y, this.width, this.height);
 			} else {
-				ctx.drawImage(skeleton[2], this.x + TILE_SIZE * 1 / 10, this.y, this.width * 3 / 2, this.height * 7 / 10);
+				if (this.rand === 1) {
+					ctx.drawImage(skeleton[2], this.x + TILE_SIZE * 1 / 10, this.y, this.width * 3 / 2, this.height * 7 / 10);
+				} else {
+					ctx.drawImage(skeleton[9], this.x + TILE_SIZE * 1 / 10, this.y, this.width * 3 / 2, this.height * 7 / 10);
+				}
 			}
 		}
 	};

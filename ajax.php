@@ -10,7 +10,7 @@
 	
 	$q = $_REQUEST["q"];
 	
-	if(q == "score") {
+	if($q == "score") {
 		$sql = "SELECT * FROM highscores ORDER BY score DESC";
 		$result = $conn->query($sql);
 		$rank = 1;

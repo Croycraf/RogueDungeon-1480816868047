@@ -463,11 +463,11 @@ function updateGameArea() {
 		ctx.font = "20px Consolas";
 		ctx.fillText("High Scores", 250, 20);
 		if(serverConnection === 1) {
-			ctx.fillText("Success", 20, 40);
+			//ctx.fillText("Success", 20, 40);
 			drawOutput(highScoresText);
 		}
 		else {
-			ctx.fillText("Failed", 20, 40);
+			//ctx.fillText("Failed", 20, 40);
 			drawError();
 		}
 	}
@@ -2235,8 +2235,16 @@ function drawOutput(responseText) {
 	//serverConnection = 1;
 	highScoresText = responseText;
 	ctx.fillStyle = "white";
-	ctx.fillText("Server success!", 60, 250);
+	//ctx.fillText("Server success!", 60, 250);
 	ctx.fillText(responseText, 100, 100);
+	var entries = responseText.split("_");
+	for(var i = 0; i < entries.length; i++) {
+		var row = entries[i].split(" ");
+		ctx.fillText(row[0], 20, 30);
+		ctx.fillText(row[1], 20, 160);
+		ctx.fillText(row[2], 20, 350);
+		ctx.fillText(row[3], 20, 550);
+	}
 }
 	
 function getRequest(url, success, errorFunc) {

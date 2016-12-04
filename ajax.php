@@ -30,10 +30,12 @@
 		}
 	}
 	else {
+		/*
 		$score = $_REQUEST["score"];
 		$floor = $_REQUEST["floor"];
 		$name = $_REQUEST["name"];
 		echo "Your Input: " . $name . " " . $score . " " . $floor
+		*/
 	}
 	$conn->close();
 ?>

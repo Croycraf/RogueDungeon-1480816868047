@@ -2211,7 +2211,7 @@ function getRequest(url, success, errorFunc) {
 			}
 		}
 	};
-	req.open("GET", url + "?q=score_name_sc_floor", true);
+	req.open("GET", url + "?q=score", true);
 	req.send();
 	return req;
 }

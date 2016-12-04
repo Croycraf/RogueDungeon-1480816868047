@@ -15,7 +15,7 @@
 	echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";
 	
 	while ($row = $result->fetch_array()) {
-		echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";
+		echo $rank . $row['userName'] . $row['score'] . $row['floor'];
 		$rank++;
 	}
 	

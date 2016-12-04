@@ -2257,7 +2257,7 @@ function drawError() {
 	//let user know error occurred when contacting high scores server
 	//serverConnection = 0;
 	ctx.fillStyle = "white";
-	ctx.fillText("Server error!", 60, 250);
+	ctx.fillText("Waitiing for server response...", 60, 250);
 }
 	
 function drawOutput(responseText) {

@@ -191,6 +191,8 @@ function loadImages() {
 	heroImages[10].src = "images/hero images/question mark.png";
 	heroImages[11] = new Image();
 	heroImages[11].src = "images/hero images/question marks.png";
+	heroImages[12] = new Image();
+	heroImages[12].src = "images/hero images/poison.png";
 }
 
 var gameArea = {
@@ -326,6 +328,7 @@ function player(x, y) {
 	this.hamperAnimation = 0;
 	this.crushAnimation = 0;
 	this.yChange = 0;
+	this.viperAnimation = 0;
 	
 	this.armorRank = 0;
 	this.armor = 3;
@@ -994,7 +997,9 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
-
+		//draw viper strike
+		ctx.drawImage(heroImages[12], xPos + 55, yPos - 4, 38, 44);
+		
 		if(pl.utilityAbility[2] === 1) {
 			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
@@ -1027,7 +1032,9 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
-
+		//draw viper strike
+		ctx.drawImage(heroImages[12], xPos + 55, yPos - 4, 38, 44);
+		
 		if(pl.utilityAbility[5] === 1) {
 			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
@@ -1060,7 +1067,9 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
-
+		//draw viper strike
+		ctx.drawImage(heroImages[12], xPos + 55, yPos - 4, 38, 44);
+		
 		if(pl.utilityAbility[8] === 1) {
 			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
@@ -1228,11 +1237,26 @@ function updateGameArea() {
 				pl.enrageAnimation = 0;
 				ctx.drawImage(character[6], 100, 435, 105, 115);
 			}
+		} else if (pl.viperAnimation === 1) {
+			var combatOffset = 4;
+			pl.attackMotion++;
+			var frameLength = 15;
+			if (pl.attackMotion < frameLength) {
+				if (pl.attackMotion < (frameLength / 2)) {
+					ctx.drawImage(character[10], 100, 435, 105, 115);
+				} else {
+					ctx.drawImage(character[6], 100, 435, 105, 115);
+				}
+				ctx.drawImage(heroImages[12], 120 + pl.attackMotion * 20, 360 - pl.attackMotion * 20, 80, 80);
+			} else {
+				pl.viperAnimation = 0;
+				ctx.drawImage(character[6], 100, 435, 105, 115);
+			}
 		} else {
 			ctx.drawImage(character[6], 100, 435, 105, 115);
 		}
 		
-		//draw hamper
+		//draw hamper or crush
 		if (pl.hamperAnimation === 1) {
 			pl.attackMotion++;
 			var frameLength = 15;
@@ -1324,6 +1348,7 @@ function updateGameArea() {
 		}
 		ctx.fillText("(V)iper", 300, 550);
 		ctx.fillText(" Strike", 300, 570);
+		ctx.drawImage(heroImages[12], 366, 533, 36, 45);
 		ctx.fillStyle = "white";
 		if(pl.offenseAbility[9] === 0) {
 			ctx.fillStyle = "grey";
@@ -2181,6 +2206,8 @@ window.onkeyup = function(e) {
 				//viper strike
 				if(pl.viperStrike > 0) {
 					awaitingInput = 0;
+					pl.viperAnimation = 1;
+					pl.attackMotion = 0;
 					var armorReduction = target.armor - pl.armorPen;
 					if(pl.armorPen > target.armor) {
 						armorReduction = 0;
@@ -2398,6 +2425,7 @@ window.onkeyup = function(e) {
 				pl.enrageAnimation = 0;
 				pl.hamperAnimation = 0;
 				pl.crushAnimation = 0;
+				pl.viperAnimation = 0;
 				combatHandle();
 			}
 		}

@@ -253,6 +253,8 @@ function player(x, y) {
 	this.speedEntropy = Math.floor(Math.random() * 100);
 	this.turnStorage = 0;
 	
+	this.name = "";
+	
 	this.priceScale = 1.2;
 	
 	this.speed = 45;
@@ -440,6 +442,10 @@ function updateGameArea() {
 		ctx.font = "40px Consolas";
 		ctx.fillText("GAME OVER", 200, 200);
 		ctx.fillText("Score: " + score, 200, 300);
+		ctx.fllStyle = "white";
+		ctx.fillRect(100, 300, 400, 30);
+		ctx.fillStyle = "black";
+		ctx.fillText(pl.name, 100, 300);
 	}
 	else if(abilitiesActive === 1) {
 		//draw hero abilities screen
@@ -1624,6 +1630,7 @@ window.onkeyup = function(e) {
 	
 	if(gameOver === 1) {
 		//block all inputs
+		pl.name = String.fromCharCode(key);
 	}
 	else if(abilitiesActive === 1) {
 		if(key === 72) {

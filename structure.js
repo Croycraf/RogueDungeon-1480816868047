@@ -1685,8 +1685,10 @@ window.onkeyup = function(e) {
 			}
 			else if(key === 13) {
 				//SEND RESULTS AND PREVENT MULTIPLE SENDS
+				getOutput();
 				sentHighScores = 1;
 				scoreboardActive = 1;
+				
 			}
 			else if(key === 17 || key === 18 || key === 16 || key === 9 || key === 220 || key === 187 || key === 189 || key === 32 || key === 20 || key === 27 || key === 112 || key === 113 || key === 114 || key === 115 || key === 116 || key === 117 || key === 118 || key === 119 || key === 120 || key === 121 || key === 122 || key === 123 || key === 45 || key === 46) {
 				//block inputs from adding chars
@@ -1694,6 +1696,11 @@ window.onkeyup = function(e) {
 			}
 			else {
 				pl.name = pl.name + String.fromCharCode(key);
+			}
+		}
+		else {
+			if(key === 75) {
+				scoreboardActive = 1;
 			}
 		}
 	}

@@ -2243,7 +2243,12 @@ function getRequest(url, success, errorFunc) {
 			}
 		}
 	};
-	req.open("GET", url + "?q=score", true);
+	//if(gameOver === 1) {
+	//	req.open("GET", url + "?q=send&name=" + pl.name + "&score=" + score + "&floor=" + dungeonLevel);
+	//}
+	//else {
+		req.open("GET", url + "?q=" + "score", true);
+	//}
 	req.send();
 	return req;
 }

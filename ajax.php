@@ -18,15 +18,21 @@
 	//echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
 
 	if($result->num_rows > 0) {
-		//echo "before while";
+		echo "before while";
 		while ($row = $result->fetch_assoc()) {
 			echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
 			$rank++;
 		}
 	}
-	//else {
-	//	echo "zero or less";
-	//}
+	else {
+		if($result->num_rows == 0) {
+			echo "zero";
+		}
+		else {
+			echo "less than zero";
+		}
+		//echo "zero or less";
+	}
 
 	$conn->close();
 

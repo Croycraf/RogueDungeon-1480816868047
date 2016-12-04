@@ -10,10 +10,11 @@
 	
 	$q = $_REQUEST["q"];
 	
-	$result = $conn->query("SELECT userName, score, floor FROM highscores ORDER BY score DESC");
+	$sql = "SELECT * FROM highscores ORDER BY score DESC";
+	$result = $conn->query($sql);
 	$rank = 1;
-	//echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";
 	
+	//echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";
 	//echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
 
 	if($result->num_rows > 0) {

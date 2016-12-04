@@ -475,6 +475,10 @@ function updateGameArea() {
 		ctx.fillStyle = "white";
 		ctx.font = "20px Consolas";
 		ctx.fillText("High Scores", 250, 20);
+		ctx.fillText("Rank", 30, 40);
+		ctx.fillText("Name", 90, 40);
+		ctx.fillText("Score", 300, 40);
+		ctx.fillText("Floor", 500, 40);
 	}
 	else if(gameOver === 1) {
 		//draw gameover screen
@@ -2263,10 +2267,10 @@ function drawOutput(responseText) {
 	var entries = responseText.split("_");
 	for(var i = 0; i < entries.length - 1; i++) {
 		var row = entries[i].split(" ");
-		ctx.fillText(row[0], 30, 60 + 30 * i - 500 * scoreOffset);
-		ctx.fillText(row[1], 90 , 60 + 30 * i - 500 * scoreOffset);
-		ctx.fillText(row[2], 300, 60 + 30 * i - 500 * scoreOffset);
-		ctx.fillText(row[3], 500, 60 + 30 * i - 500 * scoreOffset);
+		ctx.fillText(row[0], 30, 80 + 30 * i - 500 * scoreOffset);
+		ctx.fillText(row[1], 90 , 80 + 30 * i - 500 * scoreOffset);
+		ctx.fillText(row[2], 300, 80 + 30 * i - 500 * scoreOffset);
+		ctx.fillText(row[3], 500, 80 + 30 * i - 500 * scoreOffset);
 	}
 }
 	

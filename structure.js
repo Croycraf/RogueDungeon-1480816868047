@@ -61,6 +61,10 @@ function loadImages() {
 	basicImage[4].src = "images/shopping cart.png";
 	basicImage[5] = new Image();
 	basicImage[5].src = "images/shop border image.png";
+	basicImage[6] = new Image();
+	basicImage[6].src = "images/hero ability selected.png";
+	basicImage[7] = new Image();
+	basicImage[7].src = "images/hero ability selected tilted.png";
 	
 	//staircase images
 	staircase = new Array();
@@ -157,6 +161,20 @@ function loadImages() {
 	combatItems[6].src = "images/combat items/sword motion 2.png";
 	combatItems[7] = new Image();
 	combatItems[7].src = "images/combat items/sword motion 3.png";
+	
+	//hero images
+	heroImages = new Array();
+	heroImages.onload = function () {
+		imgLoaded = true;
+	}
+	heroImages[0] = new Image();
+	heroImages[0].src = "images/hero images/shield.png";
+	heroImages[1] = new Image();
+	heroImages[1].src = "images/hero images/heart.png";	
+	heroImages[2] = new Image();
+	heroImages[2].src = "images/hero images/figure running.png";
+	heroImages[3] = new Image();
+	heroImages[3].src = "images/hero images/broken shield.png";
 }
 
 var gameArea = {
@@ -688,326 +706,353 @@ function updateGameArea() {
 		
 		//tier 1
 		if(pl.offenseAbility[0] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos, yPos, 40, 40);
+		} else {
+			ctx.fillRect(xPos, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos, yPos, 40, 40);
+		//draw wrath
+		ctx.drawImage(combatItems[4], xPos + 5, yPos + 2, 35, 35);
+		
 		if(pl.offenseAbility[1] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 50, yPos - 2, 50, 50);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+			ctx.lineTo(xPos + 50 + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
-		ctx.lineTo(xPos + 50 + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
-		ctx.closePath();
-		ctx.fill();
+
 		if(pl.offenseAbility[2] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos + 110, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		//draw sunder
+		ctx.drawImage(heroImages[3], xPos + 113, yPos + 3, 35, 35);
 		
 		//tier 2
 		yPos = 160;
 		if(pl.offenseAbility[3] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos, yPos, 40, 40);
+		//draw wrath
+		ctx.drawImage(combatItems[4], xPos + 5, yPos + 2, 35, 35);
+		
 		if(pl.offenseAbility[4] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 50, yPos - 2, 50, 50);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+			ctx.lineTo(xPos + 50 + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
-		ctx.lineTo(xPos + 50 + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
-		ctx.closePath();
-		ctx.fill();
+	
 		if(pl.offenseAbility[5] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos + 110, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		//draw sunder
+		ctx.drawImage(heroImages[3], xPos + 113, yPos + 3, 35, 35);
 		
 		//tier 3
 		yPos = 240;
 		if(pl.offenseAbility[6] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos, yPos, 40, 40);
+		//draw wrath
+		ctx.drawImage(combatItems[4], xPos + 5, yPos + 2, 35, 35);
+
 		if(pl.offenseAbility[7] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 50, yPos - 2, 50, 50);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+			ctx.lineTo(xPos + 50 + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
-		ctx.lineTo(xPos + 50 + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
-		ctx.closePath();
-		ctx.fill();
+
 		if(pl.offenseAbility[8] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos + 110, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		//draw sunder
+		ctx.drawImage(heroImages[3], xPos + 113, yPos + 3, 35, 35);
 		
 		//tier 4
 		yPos = 300;
 		if(pl.offenseAbility[9] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 35, yPos, 80, 80);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 35, yPos + 40);
+			ctx.lineTo(xPos + 35 + 40, yPos);
+			ctx.lineTo(xPos + 35 + 80, yPos + 40);
+			ctx.lineTo(xPos + 35 + 40, yPos + 80);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 35, yPos + 40);
-		ctx.lineTo(xPos + 35 + 40, yPos);
-		ctx.lineTo(xPos + 35 + 80, yPos + 40);
-		ctx.lineTo(xPos + 35 + 40, yPos + 80);
-		ctx.closePath();
-		ctx.fill();
+
 		
 		//draw defensive abilities
 		xPos = 225;
 		//tier 1
 		yPos = 80;
 		if(pl.defenseAbility[0] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos, yPos, 40, 40);
+		//draw barrier
+		ctx.drawImage(heroImages[0], xPos + 5, yPos + 4, 30, 32);
+
 		if(pl.defenseAbility[1] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 50, yPos - 2, 50, 50);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+			ctx.lineTo(xPos + 50 + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
-		ctx.lineTo(xPos + 50 + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
-		ctx.closePath();
-		ctx.fill();
+
 		if(pl.defenseAbility[2] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos + 110, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		//draw regeneration
+		ctx.drawImage(heroImages[1], xPos + 114, yPos + 2, 33, 37);
 		
 		//tier 2
 		yPos = 160;
 		if(pl.defenseAbility[3] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos, yPos, 40, 40);
+		//draw barrier
+		ctx.drawImage(heroImages[0], xPos + 5, yPos + 4, 30, 32);
+		
 		if(pl.defenseAbility[4] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 50, yPos - 2, 50, 50);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+			ctx.lineTo(xPos + 50 + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
-		ctx.lineTo(xPos + 50 + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
-		ctx.closePath();
-		ctx.fill();
+
 		if(pl.defenseAbility[5] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos + 110, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		//draw regeneration
+		ctx.drawImage(heroImages[1], xPos + 114, yPos + 2, 33, 37);
 		
 		//tier 3
 		yPos = 240;
 		if(pl.defenseAbility[6] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos, yPos, 40, 40);
+		//draw barrier
+		ctx.drawImage(heroImages[0], xPos + 5, yPos + 4, 30, 32);
+		
 		if(pl.defenseAbility[7] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 50, yPos - 2, 50, 50);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+			ctx.lineTo(xPos + 50 + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
-		ctx.lineTo(xPos + 50 + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
-		ctx.closePath();
-		ctx.fill();
+
 		if(pl.defenseAbility[8] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos + 110, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		//draw regeneration
+		ctx.drawImage(heroImages[1], xPos + 114, yPos + 2, 33, 37);
 		
 		//tier 4
 		yPos = 300;
 		if(pl.defenseAbility[9] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 35, yPos, 80, 80);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 35, yPos + 40);
+			ctx.lineTo(xPos + 35 + 40, yPos);
+			ctx.lineTo(xPos + 35 + 80, yPos + 40);
+			ctx.lineTo(xPos + 35 + 40, yPos + 80);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 35, yPos + 40);
-		ctx.lineTo(xPos + 35 + 40, yPos);
-		ctx.lineTo(xPos + 35 + 80, yPos + 40);
-		ctx.lineTo(xPos + 35 + 40, yPos + 80);
-		ctx.closePath();
-		ctx.fill();
 		
 		//draw utility abilities
 		xPos = 420;
 		//tier 1
 		yPos = 80;
 		if(pl.utilityAbility[0] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos, yPos, 40, 40);
+		//draw midas touch
+		ctx.drawImage(basicImage[3], xPos + 1, yPos + 3, 38, 32);
+		
 		if(pl.utilityAbility[1] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 50, yPos - 2, 50, 50);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+			ctx.lineTo(xPos + 50 + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
-		ctx.lineTo(xPos + 50 + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
-		ctx.closePath();
-		ctx.fill();
+
 		if(pl.utilityAbility[2] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
-		}
-		ctx.fillRect(xPos + 110, yPos, 40, 40);
+			ctx.fillRect(xPos + 110, yPos, 40, 40);
+		}	
+		//draw quickness
+		ctx.drawImage(heroImages[2], xPos + 114, yPos + 2, 33, 34);
 		
 		//tier 2
 		yPos = 160;
 		if(pl.utilityAbility[3] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos, yPos, 40, 40);
+		//draw midas touch
+		ctx.drawImage(basicImage[3], xPos + 1, yPos + 3, 38, 32);
+		
 		if(pl.utilityAbility[4] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 50, yPos - 2, 50, 50);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+			ctx.lineTo(xPos + 50 + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
-		ctx.lineTo(xPos + 50 + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
-		ctx.closePath();
-		ctx.fill();
+
 		if(pl.utilityAbility[5] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos + 110, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		//draw quickness
+		ctx.drawImage(heroImages[2], xPos + 114, yPos + 2, 33, 34);
 		
 		//tier 3
 		yPos = 240;
 		if(pl.utilityAbility[6] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos, yPos, 40, 40);
+		//draw midas touch
+		ctx.drawImage(basicImage[3], xPos + 1, yPos + 3, 38, 32);
+		
 		if(pl.utilityAbility[7] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 50, yPos - 2, 50, 50);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
+			ctx.lineTo(xPos + 50 + 50, yPos + 20);
+			ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 - 25);
-		ctx.lineTo(xPos + 50 + 50, yPos + 20);
-		ctx.lineTo(xPos + 50 + 25, yPos + 20 + 25);
-		ctx.closePath();
-		ctx.fill();
+
 		if(pl.utilityAbility[8] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[6], xPos + 110, yPos, 40, 40);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.fillRect(xPos + 110, yPos, 40, 40);
 		}
-		ctx.fillRect(xPos + 110, yPos, 40, 40);
+		//draw quickness
+		ctx.drawImage(heroImages[2], xPos + 114, yPos + 2, 33, 34);
 		
 		//tier 4
 		yPos = 300;
 		if(pl.utilityAbility[9] === 1) {
-			ctx.fillStyle = "green";
+			ctx.drawImage(basicImage[7], xPos + 35, yPos, 80, 80);
 		}
 		else {
-			ctx.fillStyle = "grey";
+			ctx.beginPath();
+			ctx.moveTo(xPos + 35, yPos + 40);
+			ctx.lineTo(xPos + 35 + 40, yPos);
+			ctx.lineTo(xPos + 35 + 80, yPos + 40);
+			ctx.lineTo(xPos + 35 + 40, yPos + 80);
+			ctx.closePath();
+			ctx.fill();
 		}
-		ctx.beginPath();
-		ctx.moveTo(xPos + 35, yPos + 40);
-		ctx.lineTo(xPos + 35 + 40, yPos);
-		ctx.lineTo(xPos + 35 + 80, yPos + 40);
-		ctx.lineTo(xPos + 35 + 40, yPos + 80);
-		ctx.closePath();
-		ctx.fill();
 	}
 	else if(shopActive === 1) {
 		//draw shop screen
 		
-		//draw background
+		//draw backghround
 		ctx = gameArea.context;
 		ctx.fillStyle = "grey";
 		ctx.fillRect(10, 10, 580, 580);

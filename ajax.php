@@ -11,7 +11,10 @@
 	$q = $_REQUEST["q"];
 	
 	$sql = "SELECT * FROM highscores ORDER BY score DESC";
-	$result = $conn->query($sql);
+	//$result = $conn->query($sql);
+	$result = $conn->prepare($sql);
+	$result->execute();
+	$result->store_result();
 	$rank = 1;
 	
 	//echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";

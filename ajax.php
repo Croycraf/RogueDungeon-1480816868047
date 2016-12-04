@@ -12,7 +12,10 @@
 	
 	$result = $conn->query("SELECT userName, score, floor FROM highscores ORDER BY score DESC");
 	$rank = 1;
-	echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";
+	//echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";
+	
+	echo $rank . $row["userName"] . $row["score"] . $row["floor"]. "<br>";
+
 	/*
 	while ($row = mysql_fetch_assoc($result)) {
 		echo "{$rank} {$row['userName']} {$row['score']} {$row['floor']}";

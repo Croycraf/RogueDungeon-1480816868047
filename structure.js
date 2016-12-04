@@ -1729,7 +1729,9 @@ window.onkeyup = function(e) {
 		}
 		else {
 			if(key === 75) {
+				gameOver = 0;
 				getOutput();
+				gameOver = 1;
 				scoreboardActive = 1;
 			}
 		}

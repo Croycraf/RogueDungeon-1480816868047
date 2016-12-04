@@ -10,7 +10,7 @@
 	
 	$q = $_REQUEST["q"];
 	
-	$result = mysql_query("SELECT userName, score, floor FROM highscores ORDER BY score DESC");
+	$result = $conn->query("SELECT userName, score, floor FROM highscores ORDER BY score DESC");
 	$rank = 1;
 	/*
 	if (mysql_num_rows($result)) {

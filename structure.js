@@ -51,6 +51,12 @@ function loadImages() {
 	basicImage[0].src = "images/basic tile.png";
 	basicImage[1] = new Image();
 	basicImage[1].src = "images/enemy name border.jpg";
+	basicImage[2] = new Image();
+	basicImage[2].src = "images/helmet.png";
+	basicImage[3] = new Image();
+	basicImage[3].src = "images/gold.png";
+	basicImage[4] = new Image();
+	basicImage[4].src = "images/shopping cart.png";
 	
 	//staircase images
 	staircase = new Array();
@@ -957,7 +963,8 @@ function updateGameArea() {
 		//draw gold
 		ctx.font = "20px Consolas";
 		ctx.fillStyle = "white";
-		ctx.fillText("Gold: " + gold, 15, 50);
+		ctx.fillText("Gold:   " + gold, 15, 50);
+		ctx.drawImage(basicImage[3], 74, 34, 30, 18);
 		
 		//draw weapon upgrade
 		ctx.fillStyle = "black";
@@ -1222,7 +1229,8 @@ function updateGameArea() {
 		ctx = gameArea.context;
 		ctx.font = "20px Consolas";
 		ctx.fillStyle = "white";
-		ctx.fillText("Gold: " + gold, 15, 50);
+		ctx.fillText("Gold:   " + gold, 15, 50);
+		ctx.drawImage(basicImage[3], 74, 34, 30, 18);
 		
 		//draw new point notification
 		ctx.fillStyle = "white";
@@ -1231,8 +1239,10 @@ function updateGameArea() {
 		}
 		
 		//draw control information
-		ctx.fillText("(H)ero Abilities", 15, 580);
-		ctx.fillText("(S)hop", 15, 560);
+		ctx.fillText("(H)ero Abilities", 30, 580);
+		ctx.drawImage(basicImage[2], 8, 563, 22, 30);
+		ctx.fillText("(S)hop", 30, 560);
+		ctx.drawImage(basicImage[4], 10, 546, 22, 17);
 	}
 }
 

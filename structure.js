@@ -43,6 +43,45 @@ function start() {
 	generateRoom();
 }
 
+function restart() {
+	serverConnection = 0;
+	sentHighScores = 0;
+	highScoresText = "generic text test";
+	scoreOffset = 0;
+	
+	//general globals
+	dungeonLevel = 1;
+	gold = 0;
+	score = 0;
+	
+	//hero ability globals
+	abilitySelected = "null";
+	columnSelected = "null";
+	abilityError = "";
+	displayNewPoint = 0;
+	
+	//game state globals
+	combatActive = 0;
+	shopActive = 0;
+	abilitiesActive = 0;
+	awaitingInput = 0;
+	gameOver = 0;
+	scoreboardActive = 0;
+	startMenuActive = 1;
+	frameCount = 0;
+	delayOver = 0;
+	
+	//current floor values
+	startTileDirection = 0;
+	characterDirection = 0;
+	characterMoved = 0;
+	characterMoving = 0;
+	movingIndex = 0;
+	
+	pl = new player(100, 120);
+	generateRoom();
+}
+
 function loadImages() {
 	var imgLoaded = false;
 	ctx = gameArea.context;
@@ -370,7 +409,7 @@ function player(x, y) {
 	position = null;
 	
 	//combat variables and related shop variables
-	this.hp = 100;
+	this.hp = 5;
 	this.speedEntropy = Math.floor(Math.random() * 100);
 	this.turnStorage = 0;
 	
@@ -651,11 +690,14 @@ function updateGameArea() {
 		
 		//draw button info
 		ctx.fillStyle = "black";
-		ctx.fillRect(0, 600, 600, 60);
+		ctx.fillRect(0, 600, 590, 70);
 		ctx.font = "20px Consolas";
 		ctx.fillStyle = "white";
 		ctx.fillText("(K)Exit", 15, 650);
-		ctx.fillText("Use arrow keys to scroll up and down", 120, 630);
+		ctx.fillText("Use arrow keys to scroll up and down", 105, 620);
+		if (gameOver === 1) {
+			ctx.fillText("(S)tart Over", 450, 650);
+		}
 	}
 	else if(gameOver === 1) {
 		//draw gameover screen
@@ -687,6 +729,11 @@ function updateGameArea() {
 			} else if (frameCount > 49) {
 				frameCount = 0;
 			}
+		} else if (delayOver === 1) {
+			ctx.font = "20px Consolas";
+			ctx.fillStyle = "white";
+			ctx.fillText("(S)tart Over", 450, 650);
+			ctx.fillText("(K)High Scores", 15, 650);
 		}
 		frameCount++;
 		if (frameCount > 70) {
@@ -2109,6 +2156,11 @@ window.onkeyup = function(e) {
 			if(scoreOffset > 0) {
 				scoreOffset = scoreOffset - 1;
 			}
+		} else if(key === 83) {
+			if(gameOver === 1) {
+				//start over
+ 				restart();
+			}
 		}
 	}
 	else if(gameOver === 1) {
@@ -2145,6 +2197,10 @@ window.onkeyup = function(e) {
 				getOutput();
 				gameOver = 1;
 				scoreboardActive = 1;
+			} 
+			else if(key === 83) {
+				//start over
+ 				restart();
 			}
 		}
 	}

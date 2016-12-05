@@ -212,7 +212,7 @@ var gameArea = {
 	canvas : document.createElement("canvas"),
 	start : function() {
 		this.canvas.width = 600;
-		this.canvas.height = 600;
+		this.canvas.height = 660;
 		this.context = this.canvas.getContext("2d");
 		document.body.insertBefore(this.canvas, document.body.childNodes[0]);
 		this.interval = setInterval(updateGameArea, 20);
@@ -520,18 +520,18 @@ function updateGameArea() {
 	if(startMenuActive === 1) {
 		//draw start menu screen
 		ctx = gameArea.context;
-		ctx.drawImage(basicImage[9], 0, 0, 600, 600);
-		ctx.drawImage(basicImage[1], 70, 65, 460, 95);
+		ctx.drawImage(basicImage[9], 0, 0, 600, 660);
+		ctx.drawImage(basicImage[1], 70, 80, 460, 95);
 		ctx.fillStyle = "black";
-		ctx.fillRect(90, 85, 420, 55);
-		ctx.fillRect(175, 441, 253, 25);
+		ctx.fillRect(90, 100, 420, 55);
+		ctx.fillRect(175, 471, 253, 25);
 		ctx.fillStyle = "red";
 		ctx.font = "37px Futura";
-		ctx.fillText("ROGUE DUNGEON RPG", 100, 125);
+		ctx.fillText("ROGUE DUNGEON RPG", 100, 140);
 		ctx.fillStyle = "white";
 		ctx.font = "20px Consolas";
 		if (frameCount < 30) {
-			ctx.fillText("PRESS ANY KEY TO START", 180, 460);
+			ctx.fillText("PRESS ANY KEY TO START", 180, 490);
 		} else if (frameCount > 49) {
 			frameCount = 0;
 		}
@@ -539,7 +539,7 @@ function updateGameArea() {
 	}
 	else if(scoreboardActive === 1) {
 		ctx.fillStyle = "black";
-		ctx.fillRect(0,0, 600, 600);
+		ctx.fillRect(0,0, 600, 660);
 		ctx.fillStyle = "white";
 		ctx.font = "20px Consolas";
 		if(serverConnection === 1) {
@@ -559,34 +559,40 @@ function updateGameArea() {
 		ctx.fillText("Name", 90, 40);
 		ctx.fillText("Score", 300, 40);
 		ctx.fillText("Floor", 500, 40);
+		
+		//draw button info
+		ctx.font = "20px Consolas";
+		ctx.fillStyle = "white";
+		ctx.fillText("(K)Exit", 15, 650);
+		ctx.fillText("Use arrow keys to scroll up and down", 120, 630);
 	}
 	else if(gameOver === 1) {
 		//draw gameover screen
 		ctx = gameArea.context;
 		ctx.fillStyle = "black";
-		ctx.fillRect(0, 0, 600, 600);
+		ctx.fillRect(0, 0, 600, 660);
 		ctx.fillStyle = "red";
 		ctx.font = "70px Consolas";
-		ctx.fillText("GAME OVER", 123, 180);
+		ctx.fillText("GAME OVER", 123, 210);
 		ctx.font = "40px Consolas";
 		if (score < 1000) {
-			ctx.fillText("Score: " + score, 180, 240);
+			ctx.fillText("Score: " + score, 180, 270);
 		} else if (score < 10000) {
-			ctx.fillText("Score: " + score, 174, 240);
+			ctx.fillText("Score: " + score, 174, 270);
 		} else {
-			ctx.fillText("Score: " + score, 168, 240);
+			ctx.fillText("Score: " + score, 168, 270);
 		}
 		if(sentHighScores === 0 && delayOver === 1) {
 			ctx.fillStyle = "white";
-			ctx.fillRect(100, 335, 400, 30);
+			ctx.fillRect(100, 365, 400, 30);
 			ctx.fillStyle = "black";
 			ctx.font = "30px Consolas";
-			ctx.fillText(pl.name, 100, 360);
+			ctx.fillText(pl.name, 100, 390);
 			
 			if (frameCount < 30) {
-			ctx.fillStyle = "white";
-			ctx.font = "25px Consolas";
-			ctx.fillText("(ENTER NAME)", 215, 325);
+				ctx.fillStyle = "white";
+				ctx.font = "25px Consolas";
+				ctx.fillText("(ENTER NAME)", 215, 355);
 			} else if (frameCount > 49) {
 				frameCount = 0;
 			}
@@ -1142,6 +1148,15 @@ function updateGameArea() {
 		}
 		//draw seek bounty
 		ctx.drawImage(heroImages[13], xPos + 44, yPos + 9, 62, 62);
+		
+		//draw button info
+		ctx.font = "20px Consolas";
+		ctx.fillStyle = "white";
+		ctx.fillText("(H)Exit", 15, 650);
+		ctx.fillText("Navigate Ability:", 120, 630);
+		ctx.fillText("(1)Hero Ability Column 1", 315, 610);
+		ctx.fillText("(2)Hero Ability Column 2", 315, 630);
+		ctx.fillText("(3)Hero Ability Column 3", 315, 650);
 	}
 	else if(shopActive === 1) {
 		//draw shop screen
@@ -1196,6 +1211,11 @@ function updateGameArea() {
 		ctx.fillText("Upgrade", 200, 470);
 		ctx.fillText("Cost: " + pl.armorCost, 200, 490);
 		ctx.fillText("Current Rank: " + pl.armorRank, 345, 470);
+		
+		//draw button info
+		ctx.font = "20px Consolas";
+		ctx.fillStyle = "white";
+		ctx.fillText("(S)Exit", 15, 650);
 	}
 	else if(combatActive === 1) {
 		//draw combat screen
@@ -1531,12 +1551,12 @@ function updateGameArea() {
 		}
 		
 		//draw control information
-		ctx.fillText("(H)ero Abilities", 30, 580);
-		ctx.drawImage(basicImage[2], 8, 563, 22, 30);
-		ctx.fillText("(S)hop", 30, 560);
-		ctx.drawImage(basicImage[4], 10, 546, 22, 17);
-		ctx.fillText("(K)High Scores", 440, 580);
-		ctx.drawImage(basicImage[4], 10, 546, 22, 17);
+		ctx.fillText("(H)ero Abilities", 30, 640);
+		ctx.drawImage(basicImage[2], 8, 623, 22, 30);
+		ctx.fillText("(S)hop", 30, 620);
+		ctx.drawImage(basicImage[4], 10, 606, 22, 17);
+		ctx.fillText("(K)High Scores", 440, 640);
+		ctx.drawImage(basicImage[4], 10, 606, 22, 17);
 	}
 }
 

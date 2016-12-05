@@ -147,6 +147,32 @@ function loadImages() {
 	skeleton[9] = new Image();
 	skeleton[9].src = "images/enemies/skeleton corpse 2.png";
 	
+	//spider enemy images
+	spider = new Array();
+	spider.onload = function () {
+		imgLoaded = true;
+	}
+	spider[0] = new Image();
+	spider[0].src = "images/enemies/spider face right.png";	
+	spider[1] = new Image();
+	spider[1].src = "images/enemies/spider face left.png";
+	spider[2] = new Image();
+	spider[2].src = "images/enemies/spider corpse.png";
+	spider[3] = new Image();
+	spider[3].src = "images/enemies/spider attack stance 1.png";
+	spider[4] = new Image();
+	spider[4].src = "images/enemies/spider attack stance 2.png";
+	spider[5] = new Image();
+	spider[5].src = "images/enemies/spider attack stance 3.png";
+	spider[6] = new Image();
+	spider[6].src = "images/enemies/spider attack stance 4.png";
+	spider[7] = new Image();
+	spider[7].src = "images/enemies/spider attack stance 5.png";
+	spider[8] = new Image();
+	spider[8].src = "images/enemies/spider attack stance 6.png";
+	spider[9] = new Image();
+	spider[9].src = "images/enemies/spider corpse 2.png";
+	
 	//combat item images
 	combatItems = new Array();
 	combatItems.onload = function () {
@@ -401,11 +427,26 @@ function enemy(x, y) {
 			if (this.alive === 1) {
 				ctx.drawImage(skeleton[this.rand], this.x + TILE_SIZE * 1 / 7, this.y, this.width, this.height);
 			} else {
-				if (this.rand === 1) {
-					ctx.drawImage(skeleton[2], this.x + TILE_SIZE * 1 / 10, this.y, this.width * 3 / 2, this.height * 7 / 10);
-				} else {
-					ctx.drawImage(skeleton[9], this.x + TILE_SIZE * 1 / 10, this.y, this.width * 3 / 2, this.height * 7 / 10);
-				}
+					if (this.rand === 1) {
+						ctx.drawImage(skeleton[2], this.x + TILE_SIZE * 1 / 10, this.y, this.width * 3 / 2, this.height * 7 / 10);
+					} else {
+						ctx.drawImage(skeleton[9], this.x + TILE_SIZE * 1 / 10, this.y, this.width * 3 / 2, this.height * 7 / 10);
+					}
+			}
+		} else if (this.type === "Spider") {
+			// pick a random direction
+			if (this.alreadyRandomized === 0) {
+				this.rand = Math.floor(Math.random() * 2); 
+				this.alreadyRandomized = 1;
+			}
+			if (this.alive === 1) {
+				ctx.drawImage(spider[this.rand], this.x, this.y, this.width + 5, this.height);
+			} else {
+					if (this.rand === 1) {
+						ctx.drawImage(spider[2], this.x, this.y, this.width + 5, this.height);
+					} else {
+						ctx.drawImage(spider[9], this.x, this.y, this.width + 5, this.height);
+					}
 			}
 		}
 	};
@@ -1253,6 +1294,24 @@ function updateGameArea() {
 			} else {
 				ctx.drawImage(skeleton[1], 380, 75, 130, 180);
 			}
+		} else if (target.type === "Spider") {	
+			if (target.renderAttackImage === 1) {
+				if (target.stanceUp) {
+					target.renderAttackImageStance++;
+					if (target.renderAttackImageStance === 6) {
+						target.stanceUp = 0;
+					}
+				} else {
+					target.renderAttackImageStance--;
+					if (target.renderAttackImageStance === 1) {
+						target.stanceUp = 1;
+						target.renderAttackImage = 0;
+					}
+				}
+				ctx.drawImage(spider[2 + target.renderAttackImageStance], 360, 75, 165, 180);
+			} else {
+				ctx.drawImage(spider[1], 360, 75, 165, 180);
+			}
 		}
 		
 		//draw player
@@ -1357,9 +1416,15 @@ function updateGameArea() {
 			} else {
 				pl.crushAnimation = 0;
 			}
-			ctx.drawImage(heroImages[10], 360, 80 - pl.yChange, 25, 25);
-			ctx.drawImage(heroImages[10], 400, 50 - pl.yChange, 25, 25);
-			ctx.drawImage(heroImages[10], 440, 80 - pl.yChange, 25, 25);
+			var xOffset = 0;
+			var yOffset = 0;
+			if (target.type === "Spider") {
+				xOffset = 15;
+				yOffset = 60;
+			}
+			ctx.drawImage(heroImages[10], 360 + xOffset, 80 - pl.yChange + yOffset , 25, 25);
+			ctx.drawImage(heroImages[10], 400 + xOffset, 50 - pl.yChange + yOffset , 25, 25);
+			ctx.drawImage(heroImages[10], 440 + xOffset, 80 - pl.yChange + yOffset , 25, 25);
 		} else if (pl.bountyAnimation === 1) {
 			pl.otherMotion++;
 			var frameLength = 15;
@@ -1377,6 +1442,8 @@ function updateGameArea() {
 			ctx.drawImage(heroImages[14], 370 + pl.xChange, 60, 120, 180);	
 			if (target.type === "Skeleton") {
 				ctx.drawImage(skeleton[1], 413 + pl.xChange, 110, 40, 55);
+			} else if (target.type === "Spider") {
+				ctx.drawImage(spider[1], 398 + pl.xChange, 110, 58, 55);
 			}
 		}
 		
@@ -1404,6 +1471,10 @@ function updateGameArea() {
 		var xPixelOffset = 0;
 		if (target.type === "Skeleton") {
 			xPixelOffset = 22;
+		} else if (target.type === "Spider") {
+			xPixelOffset = 32;
+		} else if (target.type === "Snake") {
+			xPixelOffset = 38;
 		}
 		ctx.fillText(target.type, 374 + xPixelOffset, 286);
 		

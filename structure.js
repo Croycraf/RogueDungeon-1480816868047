@@ -690,7 +690,7 @@ function updateGameArea() {
 		
 		//draw button info
 		ctx.fillStyle = "black";
-		ctx.fillRect(0, 600, 590, 70);
+		ctx.fillRect(0, 580, 600, 80);
 		ctx.font = "20px Consolas";
 		ctx.fillStyle = "white";
 		ctx.fillText("(K)Exit", 15, 650);

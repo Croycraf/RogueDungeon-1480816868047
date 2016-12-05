@@ -689,7 +689,7 @@ function updateGameArea() {
 		ctx.fillText("Floor", 500, 40);
 		
 		//draw button info
-		ctx.fillStyle = "white";
+		ctx.fillStyle = "black";
 		ctx.fillRect(0, 580, 600, 80);
 		ctx.font = "20px Consolas";
 		ctx.fillStyle = "white";

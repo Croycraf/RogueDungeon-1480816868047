@@ -28,6 +28,7 @@ function start() {
 	scoreboardActive = 0;
 	startMenuActive = 1;
 	frameCount = 0;
+	delayOver = 0;
 	
 	//current floor values
 	startTileDirection = 0;
@@ -575,20 +576,25 @@ function updateGameArea() {
 		} else {
 			ctx.fillText("Score: " + score, 168, 240);
 		}
-		if(sentHighScores === 0) {
+		if(sentHighScores === 0 && delayOver === 1) {
 			ctx.fillStyle = "white";
 			ctx.fillRect(100, 335, 400, 30);
 			ctx.fillStyle = "black";
 			ctx.font = "30px Consolas";
 			ctx.fillText(pl.name, 100, 360);
+			
 			if (frameCount < 30) {
 			ctx.fillStyle = "white";
 			ctx.font = "25px Consolas";
 			ctx.fillText("(ENTER NAME)", 215, 325);
-		} else if (frameCount > 49) {
-			frameCount = 0;
+			} else if (frameCount > 49) {
+				frameCount = 0;
+			}
 		}
 		frameCount++;
+		if (frameCount > 70) {
+			frameCount = 0;
+			delayOver = 1;
 		}
 	}
 	else if(abilitiesActive === 1) {
@@ -1923,6 +1929,7 @@ window.onkeyup = function(e) {
 	if(startMenuActive === 1) {
 		startMenuActive = 0;
 		frameCount = 0;
+		delayOver = 0;
 	}
 	else if(scoreboardActive === 1) {
 		if(key === 75) {

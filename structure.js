@@ -575,7 +575,13 @@ function updateGameArea() {
 		} else {
 			ctx.fillText("Score: " + score, 168, 240);
 		}
-		if (frameCount < 30) {
+		if(sentHighScores === 0) {
+			ctx.fillStyle = "white";
+			ctx.fillRect(100, 335, 400, 30);
+			ctx.fillStyle = "black";
+			ctx.font = "30px Consolas";
+			ctx.fillText(pl.name, 100, 360);
+			if (frameCount < 30) {
 			ctx.fillStyle = "white";
 			ctx.font = "25px Consolas";
 			ctx.fillText("(ENTER NAME)", 215, 325);
@@ -583,12 +589,6 @@ function updateGameArea() {
 			frameCount = 0;
 		}
 		frameCount++;
-		if(sentHighScores === 0) {
-			ctx.fillStyle = "white";
-			ctx.fillRect(100, 335, 400, 30);
-			ctx.fillStyle = "black";
-			ctx.font = "30px Consolas";
-			ctx.fillText(pl.name, 100, 360);
 		}
 	}
 	else if(abilitiesActive === 1) {

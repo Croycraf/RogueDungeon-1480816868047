@@ -413,7 +413,15 @@ function enemy(x, y) {
 	position = null;
 	
 	diffScale = Math.pow(1.1, dungeonLevel);
-	this.type = "Skeleton";
+	var rand = Math.floor(Math.rand() * 100);
+	if (rand <= 33) {
+		this.type = "Snake";
+	else if (rand <= 66) {
+		this.type = "Spider";
+	}
+	else {
+		this.type = "Skeleton";
+	}
 	this.hp = Math.floor(diffScale * 50);
 	this.starthp = this.hp;
 	this.speed = Math.floor(diffScale * 30);

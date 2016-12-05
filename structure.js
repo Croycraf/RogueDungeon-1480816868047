@@ -1881,6 +1881,9 @@ window.onkeyup = function(e) {
 			}
 			else if(key === 13) {
 				//SEND RESULTS AND PREVENT MULTIPLE SENDS
+				if (pl.name === "") {
+					pl.name = "troll";
+				}
 				getOutput();
 				sentHighScores = 1;
 				gameOver = 0;
@@ -2459,13 +2462,7 @@ function drawOutput(responseText) {
 	var entries = responseText.split("_");
 	for(var i = 0; i < entries.length - 1; i++) {
 		var row = entries[i].split(" ");
-		
-		if(!row[0] || 0 === row[0].length || !this.trim()) {
-			ctx.fillText("skeleton", 30, 80 + 30 * i - 500 * scoreOffset);
-		} else {
-		
-			ctx.fillText(row[0], 30, 80 + 30 * i - 500 * scoreOffset);
-		}
+		ctx.fillText(row[0], 30, 80 + 30 * i - 500 * scoreOffset);
 		ctx.fillText(row[1], 90 , 80 + 30 * i - 500 * scoreOffset);
 		ctx.fillText(row[2], 300, 80 + 30 * i - 500 * scoreOffset);
 		ctx.fillText(row[3], 500, 80 + 30 * i - 500 * scoreOffset);

@@ -2163,7 +2163,7 @@ window.onkeyup = function(e) {
 			}
 		}
 	}
-	else if(gameOver === 1 && delayOver === 1) {
+	else if(gameOver === 1) {
 		//block all inputs
 		if(sentHighScores === 0) {
 			if(key === 8) {

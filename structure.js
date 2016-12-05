@@ -65,6 +65,8 @@ function loadImages() {
 	basicImage[6].src = "images/hero ability selected.png";
 	basicImage[7] = new Image();
 	basicImage[7].src = "images/hero ability selected tilted.png";
+	basicImage[8] = new Image();
+	basicImage[8].src = "images/hero menu border.png";
 	
 	//staircase images
 	staircase = new Array();
@@ -560,40 +562,31 @@ function updateGameArea() {
 		ctx.fillText("Hero Abilities", 120, 30);
 		ctx.fillText("Points: " + pl.abilityPoints, 360, 30);
 		
-		//draw offense section
-		ctx.fillStyle = "red";
-		ctx.fillRect(15, 40, 180, 355);
-		
-		//draw defensive section
-		ctx.fillStyle = "blue";
-		ctx.fillRect(210, 40, 180, 355);
-		
-		//draw utility section
-		ctx.fillStyle = "yellow";
-		ctx.fillRect(405, 40, 180, 355);
+		//draw hero menu border
+		ctx.drawImage(basicImage[8], 3, -5, 590, 605);
 		
 		//title bg
 		ctx.fillStyle = "black";
-		ctx.fillRect(15, 40, 180, 30);
-		ctx.fillRect(210, 40, 180, 30);
-		ctx.fillRect(405, 40, 180, 30);
+		ctx.fillRect(19, 40, 178, 30);
+		ctx.fillRect(211, 40, 178, 30);
+		ctx.fillRect(403, 40, 178, 30);
 		
 		//highlight ability selection
 		var xPos = 0;
 		var yPos = 0;
 		ctx.fillStyle = "green";
 		if(abilitySelected === 0) {
-			ctx.fillRect(15, 40, 180, 30);
+			ctx.fillRect(19, 40, 178, 30);
 			xPos = 30;
 			yPos = 80 + 80 * pl.offenseTier;
 		}
 		else if(abilitySelected === 1) {
-			ctx.fillRect(210, 40, 180, 30);
+			ctx.fillRect(211, 40, 178, 30);
 			xPos = 225;
 			yPos = 80 + 80 * pl.defenseTier;
 		}
 		else if(abilitySelected === 2) {
-			ctx.fillRect(405, 40, 180, 30);
+			ctx.fillRect(403, 40, 178, 30);
 			xPos = 420;
 			yPos = 80 + 80 * pl.utilityTier;
 		}

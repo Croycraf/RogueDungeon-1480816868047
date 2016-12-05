@@ -68,6 +68,8 @@ function loadImages() {
 	basicImage[6].src = "images/hero ability selected.png";
 	basicImage[7] = new Image();
 	basicImage[7].src = "images/hero ability selected tilted.png";
+	basicImage[8] = new Image();
+	basicImage[8].src = "images/hero menu border.png";
 	
 	//staircase images
 	staircase = new Array();
@@ -196,6 +198,12 @@ function loadImages() {
 	heroImages[11].src = "images/hero images/question marks.png";
 	heroImages[12] = new Image();
 	heroImages[12].src = "images/hero images/poison.png";
+	heroImages[13] = new Image();
+	heroImages[13].src = "images/hero images/wanted icon.png";
+	heroImages[14] = new Image();
+	heroImages[14].src = "images/hero images/wanted poster.png";
+	heroImages[15] = new Image();
+	heroImages[15].src = "images/hero images/wanted square.png";
 }
 
 var gameArea = {
@@ -326,12 +334,15 @@ function player(x, y) {
 	this.weaponCost = 100;
 	this.attacking = 0;
 	this.attackMotion = 0;
+	this.otherMotion = 0;
 	this.rampageAttack = 0;
 	this.enrageAnimation = 0;
 	this.hamperAnimation = 0;
 	this.crushAnimation = 0;
+	this.xChange = 0;
 	this.yChange = 0;
 	this.viperAnimation = 0;
+	this.bountyAnimation = 0;
 	
 	this.armorRank = 0;
 	this.armor = 3;
@@ -554,40 +565,31 @@ function updateGameArea() {
 		ctx.fillText("Hero Abilities", 120, 30);
 		ctx.fillText("Points: " + pl.abilityPoints, 360, 30);
 		
-		//draw offense section
-		ctx.fillStyle = "red";
-		ctx.fillRect(15, 40, 180, 355);
-		
-		//draw defensive section
-		ctx.fillStyle = "blue";
-		ctx.fillRect(210, 40, 180, 355);
-		
-		//draw utility section
-		ctx.fillStyle = "yellow";
-		ctx.fillRect(405, 40, 180, 355);
+		//draw hero menu border
+		ctx.drawImage(basicImage[8], 3, -5, 590, 605);
 		
 		//title bg
 		ctx.fillStyle = "black";
-		ctx.fillRect(15, 40, 180, 30);
-		ctx.fillRect(210, 40, 180, 30);
-		ctx.fillRect(405, 40, 180, 30);
+		ctx.fillRect(19, 40, 178, 30);
+		ctx.fillRect(211, 40, 178, 30);
+		ctx.fillRect(403, 40, 178, 30);
 		
 		//highlight ability selection
 		var xPos = 0;
 		var yPos = 0;
 		ctx.fillStyle = "green";
 		if(abilitySelected === 0) {
-			ctx.fillRect(15, 40, 180, 30);
+			ctx.fillRect(19, 40, 178, 30);
 			xPos = 30;
 			yPos = 80 + 80 * pl.offenseTier;
 		}
 		else if(abilitySelected === 1) {
-			ctx.fillRect(210, 40, 180, 30);
+			ctx.fillRect(211, 40, 178, 30);
 			xPos = 225;
 			yPos = 80 + 80 * pl.defenseTier;
 		}
 		else if(abilitySelected === 2) {
-			ctx.fillRect(405, 40, 180, 30);
+			ctx.fillRect(403, 40, 178, 30);
 			xPos = 420;
 			yPos = 80 + 80 * pl.utilityTier;
 		}
@@ -1096,6 +1098,8 @@ function updateGameArea() {
 			ctx.closePath();
 			ctx.fill();
 		}
+		//draw seek bounty
+		ctx.drawImage(heroImages[13], xPos + 44, yPos + 9, 62, 62);
 	}
 	else if(shopActive === 1) {
 		//draw shop screen
@@ -1259,26 +1263,25 @@ function updateGameArea() {
 			ctx.drawImage(character[6], 100, 435, 105, 115);
 		}
 		
-		//draw hamper or crush
+		//draw hamper, crush, or seek bounty
 		if (pl.hamperAnimation === 1) {
-			pl.attackMotion++;
+			pl.otherMotion++;
 			var frameLength = 15;
-			if (pl.attackMotion < frameLength) {
-				ctx.drawImage(heroImages[9], 320 + pl.attackMotion * 10, 80, 80, 80);
+			if (pl.otherMotion < frameLength) {
+				ctx.drawImage(heroImages[9], 320 + pl.otherMotion * 10, 80, 80, 80);
 			} else {
 				pl.hamperAnimation = 0;
 			}
-		}
-		if (pl.crushAnimation === 1) {
-			pl.attackMotion++;
+		} else if (pl.crushAnimation === 1) {
+			pl.otherMotion++;
 			var frameLength = 8;
-			if (pl.attackMotion < frameLength) {
+			if (pl.otherMotion < frameLength) {
 				pl.yChange++;
-			} else if (pl.attackMotion < frameLength * 2) {
+			} else if (pl.otherMotion < frameLength * 2) {
 				pl.yChange--;
-			} else if (pl.attackMotion < frameLength * 3) {
+			} else if (pl.otherMotion < frameLength * 3) {
 				pl.yChange++;
-			} else if (pl.attackMotion < frameLength * 4) {
+			} else if (pl.otherMotion < frameLength * 4) {
 				pl.yChange--;
 			} else {
 				pl.crushAnimation = 0;
@@ -1286,6 +1289,24 @@ function updateGameArea() {
 			ctx.drawImage(heroImages[10], 360, 80 - pl.yChange, 25, 25);
 			ctx.drawImage(heroImages[10], 400, 50 - pl.yChange, 25, 25);
 			ctx.drawImage(heroImages[10], 440, 80 - pl.yChange, 25, 25);
+		} else if (pl.bountyAnimation === 1) {
+			pl.otherMotion++;
+			var frameLength = 15;
+			if (pl.otherMotion < frameLength) {
+				pl.xChange++;
+			} else if (pl.otherMotion < frameLength * 2) {
+				pl.xChange--;
+			} else if (pl.otherMotion < frameLength * 3) {
+				pl.xChange++;
+			} else if (pl.otherMotion < frameLength * 4) {
+				pl.xChange--;
+			} else {
+				pl.bountyAnimation = 0;
+			}
+			ctx.drawImage(heroImages[14], 370 + pl.xChange, 60, 120, 180);	
+			if (target.type === "Skeleton") {
+				ctx.drawImage(skeleton[1], 413 + pl.xChange, 110, 40, 55);
+			}
 		}
 		
 		//draw border bars
@@ -1332,8 +1353,8 @@ function updateGameArea() {
 		ctx.font = "18px Consolas";
 		ctx.fillText("(A)ttack", 300, 430);
 		ctx.drawImage(combatItems[4], 385, 413, 25, 24);
-		ctx.fillText("(P)otion   " + pl.potions + "", 430, 430);
-		ctx.drawImage(combatItems[0], 513, 414, 30, 19);
+		ctx.fillText("(P)otion   " + pl.potions + "", 425, 430);
+		ctx.drawImage(combatItems[0], 508, 414, 30, 19);
 		if(pl.rampage === 0) {
 			ctx.fillStyle = "grey";
 		}
@@ -1356,21 +1377,25 @@ function updateGameArea() {
 		if(pl.offenseAbility[9] === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(E)nrage", 430, 470);
-		ctx.drawImage(heroImages[5], 513, 452, 23, 23);
+		ctx.fillText("(E)nrage", 425, 470);
+		ctx.drawImage(heroImages[5], 508, 452, 23, 23);
 		ctx.fillStyle = "white";
 		if(pl.defenseAbility[9] === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(C)rush", 430, 510);
-		ctx.drawImage(heroImages[11], 500, 492, 26, 22);
+		ctx.fillText("(C)rush", 425, 510);
+		ctx.drawImage(heroImages[11], 495, 492, 26, 22);
 		ctx.fillStyle = "white";
 		if(pl.utilityAbility[9] === 0) {
 			ctx.fillStyle = "grey";
 		}
-		ctx.fillText("(S)eek Bounty", 430, 550);
-		
+		ctx.fillText("(S)eek Bounty", 425, 550);
+		ctx.drawImage(heroImages[15], 555, 536, 28, 18);
+		ctx.fillStyle = "black";
+		ctx.font = "8px Consolas";
+		ctx.fillText("WANTED", 556, 544);
 		//ability error
+		ctx.font = "18px Consolas";
 		ctx.fillStyle = "red";
 		ctx.fillText(abilityError, 300, 380);
 		
@@ -2176,7 +2201,7 @@ window.onkeyup = function(e) {
 				if(pl.hamper > 0) {
 					awaitingInput = 0;
 					pl.hamperAnimation = 1;
-					pl.attackMotion = 0;
+					pl.otherMotion = 0;
 					var armorReduction = target.armor - pl.armorPen;
 					if(pl.armorPen > target.armor) {
 						armorReduction = 0;
@@ -2268,7 +2293,7 @@ window.onkeyup = function(e) {
 					pl.canCrush = 0;
 					awaitingInput = 0;
 					pl.crushAnimation = 1;
-					pl.attackMotion = 0;
+					pl.otherMotion = 0;
 					pl.yChange = 0;
 					var armorReduction = target.armor - pl.armorPen;
 					if(pl.armorPen > target.armor) {
@@ -2308,7 +2333,8 @@ window.onkeyup = function(e) {
 				if(pl.utilityAbility[9] === 1 && pl.canSeek === 1) {
 					pl.canSeek = 0;
 					awaitingInput = 0;
-					
+					pl.bountyAnimation = 1;
+					pl.otherMotion = 0;
 					target.isBounty = 1;
 					
 					combatHandle();
@@ -2425,6 +2451,8 @@ window.onkeyup = function(e) {
 				pl.canEnrage = 1;
 				pl.canCrush = 1;
 				pl.canSeek = 1;
+				pl.attackMotion = 0;
+			    pl.otherMotion = 0;
 				pl.drinkingPotion = 0;
 				pl.attacking = 0;
 				pl.rampageAttack = 0;
@@ -2432,6 +2460,7 @@ window.onkeyup = function(e) {
 				pl.hamperAnimation = 0;
 				pl.crushAnimation = 0;
 				pl.viperAnimation = 0;
+				pl.bountyAnimation = 0;
 				combatHandle();
 			}
 		}

@@ -670,6 +670,7 @@ function updateGameArea() {
 		ctx.fillStyle = "black";
 		ctx.fillRect(0, 0, 600, 600);
 		ctx.font = "20px Consolas";
+		ctx.fillStyle = "white";
 		ctx.fillText("Credits", 280, 20);
 		ctx.fillText("Source example", 50, 60);
 		ctx.fillText("(C)lose Credits", 100, 650);
@@ -698,7 +699,7 @@ function updateGameArea() {
 		ctx.fillText("Floor", 500, 40);
 		
 		//draw button info
-		ctx.fillStyle = "black";
+		ctx.fillStyle = "white";
 		ctx.fillRect(0, 580, 600, 80);
 		ctx.font = "20px Consolas";
 		ctx.fillStyle = "white";

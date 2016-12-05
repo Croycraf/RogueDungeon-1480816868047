@@ -1,9 +1,6 @@
 /*globals TILE_SIZE:true TILE_SPACE:true dungeonLevel:true gold:true ctx:true position:true pl tempHall:true mainHall sideHalls numHalls isVertical:true noEnd:true temp:true score:true combatActive:true shopActive:true awaitingInput:true gameOver:true diffScale:true enemies numEnemies:true abilitiesActive:true abilitySelected:true columnSelected:true abilityError:true displayNewPoint:true scoreboardActive serverConnection:true highScoresText:true*/
 /*eslint-env browser, shelljs*/
 function start() {
-	
-
-	
 	TILE_SIZE = 40;
 	TILE_SPACE = 50;
 	serverConnection = 0;
@@ -29,6 +26,8 @@ function start() {
 	awaitingInput = 0;
 	gameOver = 0;
 	scoreboardActive = 0;
+	startMenuActive = 1;
+	frameCount = 0;
 	
 	//current floor values
 	startTileDirection = 0;
@@ -70,6 +69,8 @@ function loadImages() {
 	basicImage[7].src = "images/hero ability selected tilted.png";
 	basicImage[8] = new Image();
 	basicImage[8].src = "images/hero menu border.png";
+	basicImage[9] = new Image();
+	basicImage[9].src = "images/start menu background.jpg";
 	
 	//staircase images
 	staircase = new Array();
@@ -515,7 +516,27 @@ function floorTile(x, y) {
 function updateGameArea() {
 	gameArea.clear();
 	
-	if(scoreboardActive === 1) {
+	if(startMenuActive === 1) {
+		//draw start menu screen
+		ctx = gameArea.context;
+		ctx.drawImage(basicImage[9], 0, 0, 600, 600);
+		ctx.drawImage(basicImage[1], 70, 65, 460, 95);
+		ctx.fillStyle = "black";
+		ctx.fillRect(90, 85, 420, 55);
+		ctx.fillRect(175, 441, 253, 25);
+		ctx.fillStyle = "red";
+		ctx.font = "37px Futura";
+		ctx.fillText("ROGUE DUNGEON RPG", 100, 125);
+		ctx.fillStyle = "white";
+		ctx.font = "20px Consolas";
+		if (frameCount < 30) {
+			ctx.fillText("PRESS ANY KEY TO START", 180, 460);
+		} else if (frameCount > 49) {
+			frameCount = 0;
+		}
+		frameCount++;
+	}
+	else if(scoreboardActive === 1) {
 		ctx.fillStyle = "black";
 		ctx.fillRect(0,0, 600, 600);
 		ctx.fillStyle = "white";
@@ -1884,7 +1905,10 @@ window.onkeyup = function(e) {
 	
 	var key = e.keyCode ? e.keyCode : e.which;
 	
-	if(scoreboardActive === 1) {
+	if(startMenuActive === 1) {
+		startMenuActive = 0;
+	}
+	else if(scoreboardActive === 1) {
 		if(key === 75) {
 			scoreboardActive = 0;
 		}

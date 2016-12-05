@@ -565,9 +565,24 @@ function updateGameArea() {
 		ctx.fillStyle = "black";
 		ctx.fillRect(0, 0, 600, 600);
 		ctx.fillStyle = "red";
+		ctx.font = "70px Consolas";
+		ctx.fillText("GAME OVER", 123, 180);
 		ctx.font = "40px Consolas";
-		ctx.fillText("GAME OVER", 200, 200);
-		ctx.fillText("Score: " + score, 200, 300);
+		if (score < 1000) {
+			ctx.fillText("Score: " + score, 180, 240);
+		} else if (score < 10000) {
+			ctx.fillText("Score: " + score, 174, 240);
+		} else {
+			ctx.fillText("Score: " + score, 168, 240);
+		}
+		if (frameCount < 30) {
+			ctx.fillStyle = "white";
+			ctx.font = "25px Consolas";
+			ctx.fillText("(ENTER NAME)", 215, 325);
+		} else if (frameCount > 49) {
+			frameCount = 0;
+		}
+		frameCount++;
 		if(sentHighScores === 0) {
 			ctx.fillStyle = "white";
 			ctx.fillRect(100, 335, 400, 30);
@@ -1907,6 +1922,7 @@ window.onkeyup = function(e) {
 	
 	if(startMenuActive === 1) {
 		startMenuActive = 0;
+		frameCount = 0;
 	}
 	else if(scoreboardActive === 1) {
 		if(key === 75) {

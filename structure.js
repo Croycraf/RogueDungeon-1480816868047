@@ -2460,7 +2460,7 @@ function drawOutput(responseText) {
 	for(var i = 0; i < entries.length - 1; i++) {
 		var row = entries[i].split(" ");
 		
-		if(!row[0] || 0 === row[0].length) {
+		if(!row[0] || 0 === row[0].length || !this.trim()) {
 			ctx.fillText("skeleton", 30, 80 + 30 * i - 500 * scoreOffset);
 		} else {
 		

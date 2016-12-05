@@ -29,6 +29,7 @@ function start() {
 	startMenuActive = 1;
 	frameCount = 0;
 	delayOver = 0;
+	creditsActive = 0;
 	
 	//current floor values
 	startTileDirection = 0;
@@ -665,6 +666,14 @@ function updateGameArea() {
 		}
 		frameCount++;
 	}
+	else if(creditsActive === 1) {
+		ctx.fillStyle = "black";
+		ctx.fillRect(0, 0, 600, 600);
+		ctx.font = "20px Consolas";
+		ctx.fillText("Credits", 280, 20);
+		ctx.fillText("Source example", 50, 60);
+		ctx.fillText("(C)lose Credits", 100, 650);
+	}
 	else if(scoreboardActive === 1) {
 		ctx.fillStyle = "black";
 		ctx.fillRect(0,0, 600, 660);
@@ -698,6 +707,7 @@ function updateGameArea() {
 		if (gameOver === 1) {
 			ctx.fillText("(S)tart Over", 450, 650);
 		}
+		ctx.fillText("(C)redits", 100, 650);
 	}
 	else if(gameOver === 1) {
 		//draw gameover screen
@@ -2141,6 +2151,10 @@ window.onkeyup = function(e) {
 		frameCount = 0;
 		delayOver = 0;
 	}
+	else if(creditsActive === 1) {
+		if(key === 67) {
+			creditsActive = 0;
+		}
 	else if(scoreboardActive === 1) {
 		if(key === 75) {
 			scoreboardActive = 0;
@@ -2161,6 +2175,10 @@ window.onkeyup = function(e) {
 				//start over
  				restart();
 			}
+		}
+		else if(key === 67) {
+			//(C)redits
+			creditsActive = 1;
 		}
 	}
 	else if(gameOver === 1) {

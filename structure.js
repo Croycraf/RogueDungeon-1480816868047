@@ -1,6 +1,9 @@
 /*globals TILE_SIZE:true TILE_SPACE:true dungeonLevel:true gold:true ctx:true position:true pl tempHall:true mainHall sideHalls numHalls isVertical:true noEnd:true temp:true score:true combatActive:true shopActive:true awaitingInput:true gameOver:true diffScale:true enemies numEnemies:true abilitiesActive:true abilitySelected:true columnSelected:true abilityError:true displayNewPoint:true scoreboardActive serverConnection:true highScoresText:true*/
 /*eslint-env browser, shelljs*/
 function start() {
+	
+
+	
 	TILE_SIZE = 40;
 	TILE_SPACE = 50;
 	serverConnection = 0;

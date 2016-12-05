@@ -147,6 +147,32 @@ function loadImages() {
 	skeleton[9] = new Image();
 	skeleton[9].src = "images/enemies/skeleton corpse 2.png";
 	
+	//snake enemy images
+	snake = new Array();
+	snake.onload = function () {
+		imgLoaded = true;
+	}
+	snake[0] = new Image();
+	snake[0].src = "images/enemies/snake face right.png";	
+	snake[1] = new Image();
+	snake[1].src = "images/enemies/snake face left.png";
+	snake[2] = new Image();
+	snake[2].src = "images/enemies/snake corpse.png";
+	snake[3] = new Image();
+	snake[3].src = "images/enemies/snake attack stance 1.png";
+	snake[4] = new Image();
+	snake[4].src = "images/enemies/snake attack stance 2.png";
+	snake[5] = new Image();
+	snake[5].src = "images/enemies/snake attack stance 3.png";
+	snake[6] = new Image();
+	snake[6].src = "images/enemies/snake attack stance 4.png";
+	snake[7] = new Image();
+	snake[7].src = "images/enemies/snake attack stance 5.png";
+	snake[8] = new Image();
+	snake[8].src = "images/enemies/snake attack stance 6.png";
+	snake[9] = new Image();
+	snake[9].src = "images/enemies/snake corpse 2.png";
+	
 	//spider enemy images
 	spider = new Array();
 	spider.onload = function () {
@@ -440,12 +466,27 @@ function enemy(x, y) {
 				this.alreadyRandomized = 1;
 			}
 			if (this.alive === 1) {
-				ctx.drawImage(spider[this.rand], this.x, this.y, this.width + 5, this.height);
+				ctx.drawImage(spider[this.rand], this.x + TILE_SIZE * 1 / 10, this.y, this.width + 5, this.height);
 			} else {
 					if (this.rand === 1) {
-						ctx.drawImage(spider[2], this.x, this.y, this.width + 5, this.height);
+						ctx.drawImage(spider[2], this.x + TILE_SIZE * 1 / 10, this.y, this.width + 5, this.height);
 					} else {
-						ctx.drawImage(spider[9], this.x, this.y, this.width + 5, this.height);
+						ctx.drawImage(spider[9], this.x + TILE_SIZE * 1 / 10, this.y, this.width + 5, this.height);
+					}
+			}
+		} else if (this.type === "Snake") {
+			// pick a random direction
+			if (this.alreadyRandomized === 0) {
+				this.rand = Math.floor(Math.random() * 2); 
+				this.alreadyRandomized = 1;
+			}
+			if (this.alive === 1) {
+				ctx.drawImage(snake[this.rand], this.x + TILE_SIZE * 1 / 10, this.y, this.width + 3, this.height);
+			} else {
+					if (this.rand === 1) {
+						ctx.drawImage(snake[2], this.x + TILE_SIZE * 1 / 10, this.y, this.width + 3, this.height);
+					} else {
+						ctx.drawImage(snake[9], this.x + TILE_SIZE * 1 / 10, this.y, this.width + 3, this.height);
 					}
 			}
 		}
@@ -1312,6 +1353,24 @@ function updateGameArea() {
 			} else {
 				ctx.drawImage(spider[1], 360, 75, 165, 180);
 			}
+		} else if (target.type === "Snake") {	
+			if (target.renderAttackImage === 1) {
+				if (target.stanceUp) {
+					target.renderAttackImageStance++;
+					if (target.renderAttackImageStance === 6) {
+						target.stanceUp = 0;
+					}
+				} else {
+					target.renderAttackImageStance--;
+					if (target.renderAttackImageStance === 1) {
+						target.stanceUp = 1;
+						target.renderAttackImage = 0;
+					}
+				}
+				ctx.drawImage(snake[2 + target.renderAttackImageStance], 370, 75, 145, 180);
+			} else {
+				ctx.drawImage(snake[1], 370, 75, 145, 180);
+			}
 		}
 		
 		//draw player
@@ -1421,6 +1480,8 @@ function updateGameArea() {
 			if (target.type === "Spider") {
 				xOffset = 15;
 				yOffset = 60;
+			} else if (target.type === "Snake") {
+				xOffset = 33;
 			}
 			ctx.drawImage(heroImages[10], 360 + xOffset, 80 - pl.yChange + yOffset , 25, 25);
 			ctx.drawImage(heroImages[10], 400 + xOffset, 50 - pl.yChange + yOffset , 25, 25);
@@ -1444,6 +1505,8 @@ function updateGameArea() {
 				ctx.drawImage(skeleton[1], 413 + pl.xChange, 110, 40, 55);
 			} else if (target.type === "Spider") {
 				ctx.drawImage(spider[1], 398 + pl.xChange, 110, 58, 55);
+			} else if (target.type === "Snake") {
+				ctx.drawImage(snake[1], 406 + pl.xChange, 110, 48, 55);
 			}
 		}
 		

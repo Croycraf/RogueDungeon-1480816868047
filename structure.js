@@ -2165,7 +2165,7 @@ window.onkeyup = function(e) {
 	}
 	else if(gameOver === 1) {
 		//block all inputs
-		if(sentHighScores === 0) {
+		if(sentHighScores === 0 && delayOver === 1) {
 			if(key === 8) {
 				pl.name = pl.name.substring(0, pl.name.length - 1);
 			}

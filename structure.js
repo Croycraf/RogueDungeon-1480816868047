@@ -329,6 +329,7 @@ function player(x, y) {
 	this.weaponCost = 100;
 	this.attacking = 0;
 	this.attackMotion = 0;
+	this.otherMotion = 0;
 	this.rampageAttack = 0;
 	this.enrageAnimation = 0;
 	this.hamperAnimation = 0;
@@ -1102,7 +1103,7 @@ function updateGameArea() {
 			ctx.fill();
 		}
 		//draw seek bounty
-		ctx.drawImage(heroImages[13], xPos + 43, yPos + 8, 64, 64);
+		ctx.drawImage(heroImages[13], xPos + 44, yPos + 9, 62, 62);
 	}
 	else if(shopActive === 1) {
 		//draw shop screen
@@ -1268,23 +1269,23 @@ function updateGameArea() {
 		
 		//draw hamper, crush, or seek bounty
 		if (pl.hamperAnimation === 1) {
-			pl.attackMotion++;
+			pl.otherMotion++;
 			var frameLength = 15;
-			if (pl.attackMotion < frameLength) {
-				ctx.drawImage(heroImages[9], 320 + pl.attackMotion * 10, 80, 80, 80);
+			if (pl.otherMotion < frameLength) {
+				ctx.drawImage(heroImages[9], 320 + pl.otherMotion * 10, 80, 80, 80);
 			} else {
 				pl.hamperAnimation = 0;
 			}
 		} else if (pl.crushAnimation === 1) {
-			pl.attackMotion++;
+			pl.otherMotion++;
 			var frameLength = 8;
-			if (pl.attackMotion < frameLength) {
+			if (pl.otherMotion < frameLength) {
 				pl.yChange++;
-			} else if (pl.attackMotion < frameLength * 2) {
+			} else if (pl.otherMotion < frameLength * 2) {
 				pl.yChange--;
-			} else if (pl.attackMotion < frameLength * 3) {
+			} else if (pl.otherMotion < frameLength * 3) {
 				pl.yChange++;
-			} else if (pl.attackMotion < frameLength * 4) {
+			} else if (pl.otherMotion < frameLength * 4) {
 				pl.yChange--;
 			} else {
 				pl.crushAnimation = 0;
@@ -1293,15 +1294,15 @@ function updateGameArea() {
 			ctx.drawImage(heroImages[10], 400, 50 - pl.yChange, 25, 25);
 			ctx.drawImage(heroImages[10], 440, 80 - pl.yChange, 25, 25);
 		} else if (pl.bountyAnimation === 1) {
-			pl.attackMotion++;
+			pl.otherMotion++;
 			var frameLength = 15;
-			if (pl.attackMotion < frameLength) {
+			if (pl.otherMotion < frameLength) {
 				pl.xChange++;
-			} else if (pl.attackMotion < frameLength * 2) {
+			} else if (pl.otherMotion < frameLength * 2) {
 				pl.xChange--;
-			} else if (pl.attackMotion < frameLength * 3) {
+			} else if (pl.otherMotion < frameLength * 3) {
 				pl.xChange++;
-			} else if (pl.attackMotion < frameLength * 4) {
+			} else if (pl.otherMotion < frameLength * 4) {
 				pl.xChange--;
 			} else {
 				pl.bountyAnimation = 0;
@@ -2204,7 +2205,7 @@ window.onkeyup = function(e) {
 				if(pl.hamper > 0) {
 					awaitingInput = 0;
 					pl.hamperAnimation = 1;
-					pl.attackMotion = 0;
+					pl.otherMotion = 0;
 					var armorReduction = target.armor - pl.armorPen;
 					if(pl.armorPen > target.armor) {
 						armorReduction = 0;
@@ -2296,7 +2297,7 @@ window.onkeyup = function(e) {
 					pl.canCrush = 0;
 					awaitingInput = 0;
 					pl.crushAnimation = 1;
-					pl.attackMotion = 0;
+					pl.otherMotion = 0;
 					pl.yChange = 0;
 					var armorReduction = target.armor - pl.armorPen;
 					if(pl.armorPen > target.armor) {
@@ -2337,7 +2338,7 @@ window.onkeyup = function(e) {
 					pl.canSeek = 0;
 					awaitingInput = 0;
 					pl.bountyAnimation = 1;
-					pl.attackMotion = 0;
+					pl.otherMotion = 0;
 					target.isBounty = 1;
 					
 					combatHandle();
@@ -2454,6 +2455,8 @@ window.onkeyup = function(e) {
 				pl.canEnrage = 1;
 				pl.canCrush = 1;
 				pl.canSeek = 1;
+				pl.attackMotion = 0;
+			    pl.otherMotion = 0;
 				pl.drinkingPotion = 0;
 				pl.attacking = 0;
 				pl.rampageAttack = 0;
